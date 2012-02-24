@@ -1,0 +1,3 @@
+module TruestackRails
+  # Your code goes here...
+end
