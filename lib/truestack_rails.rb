@@ -1,4 +1,7 @@
-require 'truestack_rails/config'
+require File.join(File.expand_path(__FILE__), 'truestack_rails/config')
+require File.join(File.expand_path(__FILE__), 'truestack_rails/railtie_3_0')
+require File.join(File.expand_path(__FILE__), 'truestack_rails/railtie_3_1')
+require File.join(File.expand_path(__FILE__), 'truestack_rails/railtie_3_2')
 require 'truestack_rails/railtie_3_0'
 require 'truestack_rails/railtie_3_1'
 require 'truestack_rails/railtie_3_2'
