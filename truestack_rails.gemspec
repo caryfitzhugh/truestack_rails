@@ -18,5 +18,6 @@ Gem::Specification.new do |s|
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
-  s.add_dependency 'truestack_client', :git => "git@github.com:caryfitzhugh/truestack_client.git"
+  # TODO re-add this when we push to rubygems
+  #s.add_dependency 'truestack_client', :git => "git@github.com:caryfitzhugh/truestack_client.git"
 end
