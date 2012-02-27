@@ -1,7 +1,6 @@
-require File.join(File.expand_path(File.dirname(__FILE__)), 'truestack_rails/config')
-require File.join(File.expand_path(File.dirname(__FILE__)), 'truestack_rails/railtie_3_0')
-require File.join(File.expand_path(File.dirname(__FILE__)), 'truestack_rails/railtie_3_1')
-require File.join(File.expand_path(File.dirname(__FILE__)), 'truestack_rails/railtie_3_2')
+Dir[File.join(File.expand_path(File.dirname(__FILE__)), 'truestack_rails','**','*.rb')].each do |file|
+  require File.basename(file)
+end
 
 module TruestackRails
   class Railtie < ::Rails::Railtie
