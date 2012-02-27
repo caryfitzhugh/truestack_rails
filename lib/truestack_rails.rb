@@ -1,4 +1,5 @@
 Dir[File.join(File.expand_path(File.dirname(__FILE__)), 'truestack_rails','**','*.rb')].each do |file|
+  pp file
   require file
 end
 
