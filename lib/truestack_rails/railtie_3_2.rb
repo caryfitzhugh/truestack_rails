@@ -1,9 +1,9 @@
 module TruestackRails
   module Railtie32
-    extend RequestLogging32
-    extend FiltersLogging32
-    extend ModelsLogging32
-    extend ExceptionsLogging32
+    extend TruestackRails::RequestLogging32
+    extend TruestackRails::FiltersLogging32
+    extend TruestackRails::ModelsLogging32
+    extend TruestackRails::ExceptionsLogging32
 
     def self.connect!
       Rails.logger.info "Truestack Rail-Tie 3.2"
