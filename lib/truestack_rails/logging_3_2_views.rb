@@ -1,5 +1,5 @@
 module TruestackRails
-  module ViewsLogging32
+  module Logging32Views
     def self.connect!
       super
     end
