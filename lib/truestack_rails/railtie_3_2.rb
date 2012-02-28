@@ -7,7 +7,7 @@ module TruestackRails
   module Railtie32
 
     def self.connect!
-      Rails.logger.info "Truestack Rail-Tie 3.2"
+      TruestackClient.logger.info "Truestack Rail-Tie 3.2"
       TruestackRails::Logging32Request.connect!
       TruestackRails::Logging32Filters.connect!
       TruestackRails::Logging32Models.connect!

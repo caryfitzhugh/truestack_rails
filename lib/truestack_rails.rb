@@ -11,14 +11,14 @@ module TruestackRails
   ## Attach to all of the different events based
   # on what rails version you are
   def self.init_rails(binding)
-    TruestackRails.config do |c|
+    TruestackClient.configure do |c|
       data = YAML.load_file("#{Rails.root}/config/truestack.yml").symbolize_keys
       c.host   = data[:host]
       c.secret = data[:secret]
       c.key    = data[:key]
       c.logger = Rails.logger
     end
-    TruestackRails.logger
+
     case (::Rails.version.to_f * 10.0).to_i / 10.0
     when 3.0
       TruestackRails::Railtie30.connect!
