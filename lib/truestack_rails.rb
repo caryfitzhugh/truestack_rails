@@ -33,6 +33,7 @@ module TruestackRails
 
   # These will track the methods
   def self.reset_methods
+    @_ts_start_time = Time.now
     @_ts_methods = []
   end
 
@@ -40,7 +41,8 @@ module TruestackRails
     binding.pry
     parent = binding.of_caller
   end
-  def self.track_methods_results(start_time)
+
+  def self.track_methods_results
     @_ts_methods
   end
 end
