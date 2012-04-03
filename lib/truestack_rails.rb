@@ -5,13 +5,13 @@ require 'truestack_rails/railtie_3_2'
 module TruestackRails
   class Railtie < ::Rails::Railtie
     config.before_initialize do
-      TruestackRails.init_rails(binding)
+      TruestackRails.init_rails
     end
   end
 
   ## Attach to all of the different events based
   # on what rails version you are
-  def self.init_rails(binding)
+  def self.init_rails
     TruestackClient.configure do |c|
       data = YAML.load_file("#{Rails.root}/config/truestack.yml").symbolize_keys
       c.host   = data[:host]
@@ -71,18 +71,19 @@ module TruestackRails
               retval
             end
 CODE
-            puts "Wrapped method #{self}##{method} - #{definition_location}"
+            TruestackClient.logger.info "Wrapped method #{self}##{method} - #{definition_location}"
           end
         end
       end
     end
+
     def singleton_method_added(method)
       definition_location = self.method(method)
       if (definition_location)
         definition_location = definition_location.source_location.first
-        PATH_WILDCARDS.each do |path|
+        self.path_wildcards.each do |path|
           if (definition_location =~ /^#{Regexp.escape(path)}/)
-            puts "HOW TO WRAP SELF. CALLS??  Wrapped method #{self}#self.#{method} - #{definition_location}"
+            TruestackClient.logger.info "HOW TO WRAP SELF. CALLS??  Wrapped method #{self}#self.#{method} - #{definition_location}"
           end
         end
       end
