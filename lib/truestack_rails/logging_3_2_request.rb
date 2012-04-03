@@ -4,28 +4,10 @@ module TruestackRails
     def self.connect!
       TruestackClient.logger.info "Rails Request Logging 3.2"
 
-      module ActionController
-        class Base
-          extend TruestackRails::TruestackMethodWrapper
-        end
-        class Metal
-          extend TruestackRails::TruestackMethodWrapper
-        end
-      end
-
-      # Gets models
-      module ActiveRecord
-        class Base
-          extend TruestackRails::TruestackMethodWrapper
-        end
-      end
-
-      # Gets helpers
-      module ActionView
-        class Base
-          extend TruestackRails::TruestackMethodWrapper
-        end
-      end
+      ActionController::Base.send(:extend, TruestackRails::TruestackMethodWrapper)
+      ActionController::Metal.send(:extend, TruestackRails::TruestackMethodWrapper)
+      ActiveRecord::Base.send(:extend, TruestackRails::TruestackMethodWrapper)
+      ActionView::Base.send(:extend, TruestackRails::TruestackMethodWrapper)
 
       ActiveSupport::Notifications.subscribe("truestack.method_call") do |name, tstart, tend, id, data|
         TruestackRails.track_called_method("view##{data[:identifier].gsub(Rails.root.to_s, '') }", tstart, tend)
