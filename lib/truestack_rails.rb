@@ -8,6 +8,7 @@ module TruestackRails
       TruestackRails.init_rails(binding)
     end
   end
+
   ## Attach to all of the different events based
   # on what rails version you are
   def self.init_rails(binding)
@@ -34,15 +35,67 @@ module TruestackRails
   # These will track the methods
   def self.reset_methods
     @_ts_start_time = Time.now
-    @_ts_methods = []
+    @_ts_methods = Hash.new {|h,k| h[k] = [] }
   end
 
-  def self.track_calling_method
-    binding.pry
-    parent = binding.of_caller
+  def self.track_called_method(name, tstart, tend)
+    @_ts_methods[name] << [tstart, tend]
   end
 
   def self.track_methods_results
     @_ts_methods
+  end
+
+  module TruestackMethodWrapper
+    PATH_WILDCARDS = [Rails.root.join("app").to_s, Rails.root.join('lib').to_s]
+
+    def method_added(method)
+      definition_location = self.instance_method(method)
+
+      if (definition_location)
+        definition_location = definition_location.source_location.first
+        PATH_WILDCARDS.each do |path|
+          if (definition_location =~ /^#{Regexp.escape(path)}/)
+            self.class_eval <<CODE
+            alias :truestack_#{method} :#{method}
+            def #{method}(*args, &block)
+              retval = nil
+              ActiveSupport::Notifications.instrument("truestack.method_call") do
+                if block_given?
+                  retval = truestack_#{method}(*args, &block)
+                else
+                  retval = truestack_#{method}(*args)
+                end
+              end
+              retval
+            end
+CODE
+            puts "Wrapped method #{self}##{method} - #{definition_location}"
+          end
+        end
+      end
+    end
+    def singleton_method_added(method)
+      definition_location = self.method(method)
+      if (definition_location)
+        definition_location = definition_location.source_location.first
+        PATH_WILDCARDS.each do |path|
+          if (definition_location =~ /^#{Regexp.escape(path)}/)
+            puts "HOW TO WRAP SELF. CALLS??  Wrapped method #{self}#self.#{method} - #{definition_location}"
+          end
+        end
+      end
+    end
+  end
+
+end
+
+class Module
+  def included(klass)
+    if klass.respond_to?(:method_added)
+      self.instance_methods.each do |method|
+        klass.method_added(method)
+      end
+    end
   end
 end
