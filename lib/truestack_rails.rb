@@ -47,14 +47,15 @@ module TruestackRails
   end
 
   module TruestackMethodWrapper
-    PATH_WILDCARDS = [Rails.root.join("app").to_s, Rails.root.join('lib').to_s]
-
+    def self.path_wildcards
+      return [Rails.root.join("app").to_s, Rails.root.join('lib').to_s]
+    end
     def method_added(method)
       definition_location = self.instance_method(method)
 
       if (definition_location)
         definition_location = definition_location.source_location.first
-        PATH_WILDCARDS.each do |path|
+        self.path_wildcards.each do |path|
           if (definition_location =~ /^#{Regexp.escape(path)}/)
             self.class_eval <<CODE
             alias :truestack_#{method} :#{method}
