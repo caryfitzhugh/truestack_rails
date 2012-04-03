@@ -16,13 +16,7 @@ module TruestackRails
       # Gets view rendering times
       ActiveSupport::Notifications.subscribe("render_template.action_view") do |name, tstart, tend, id, data|
         TruestackRails.track_called_method("view##{data[:identifier].gsub(Rails.root.to_s, '') }", tstart, tend)
-        #["render_template.action_view",
-        #2012-04-03 14:02:14 -0400,
-        #2012-04-03 14:02:27 -0400,
-        #"94898774de3422c89a7e",
-        #{:identifier=>
-        #  "/Users/cfitzhugh/working/truestack/truestack_fuzzinator/app/views/fuzz/action2.html.slim",
-        # :layout=>"layouts/application"}]
+        #["render_template.action_view", #2012-04-03 14:02:14 -0400, #2012-04-03 14:02:27 -0400, #"94898774de3422c89a7e", #{:identifier=> #  "/Users/cfitzhugh/working/truestack/truestack_fuzzinator/app/views/fuzz/action2.html.slim", # :layout=>"layouts/application"}]
       end
 
       ApplicationController.class_eval do

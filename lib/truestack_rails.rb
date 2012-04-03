@@ -55,7 +55,7 @@ module TruestackRails
 
       if (definition_location)
         definition_location = definition_location.source_location.first
-        self.path_wildcards.each do |path|
+        TruestackMethodWrapper.path_wildcards.each do |path|
           if (definition_location =~ /^#{Regexp.escape(path)}/)
             self.class_eval <<CODE
             alias :truestack_#{method} :#{method}
@@ -81,7 +81,7 @@ CODE
       definition_location = self.method(method)
       if (definition_location)
         definition_location = definition_location.source_location.first
-        self.path_wildcards.each do |path|
+        TruestackMethodWrapper.path_wildcards.each do |path|
           if (definition_location =~ /^#{Regexp.escape(path)}/)
             TruestackClient.logger.info "HOW TO WRAP SELF. CALLS??  Wrapped method #{self}#self.#{method} - #{definition_location}"
           end
