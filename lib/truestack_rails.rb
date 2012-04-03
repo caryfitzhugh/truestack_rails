@@ -47,32 +47,29 @@ module TruestackRails
   end
 
   module TruestackMethodWrapper
-    def self.path_wildcards
-      return [Rails.root.join("app").to_s, Rails.root.join('lib').to_s]
-    end
     def method_added(method)
       definition_location = self.instance_method(method)
 
       if (definition_location)
         definition_location = definition_location.source_location.first
-        TruestackMethodWrapper.path_wildcards.each do |path|
-          if (definition_location =~ /^#{Regexp.escape(path)}/)
-            self.class_eval <<CODE
-            alias :truestack_#{method} :#{method}
-            def #{method}(*args, &block)
-              retval = nil
-              ActiveSupport::Notifications.instrument("truestack.method_call") do
-                if block_given?
-                  retval = truestack_#{method}(*args, &block)
-                else
-                  retval = truestack_#{method}(*args)
-                end
+        #TruestackMethodWrapper.path_wildcards.each do |path|
+        path = Rails.root.to_s
+        if (definition_location =~ /^#{Regexp.escape(path)}/)
+          self.class_eval <<CODE
+          alias :truestack_#{method} :#{method}
+          def #{method}(*args, &block)
+            retval = nil
+            ActiveSupport::Notifications.instrument("truestack.method_call") do
+              if block_given?
+                retval = truestack_#{method}(*args, &block)
+              else
+                retval = truestack_#{method}(*args)
               end
-              retval
             end
-CODE
-            TruestackClient.logger.info "Wrapped method #{self}##{method} - #{definition_location}"
+            retval
           end
+CODE
+          TruestackClient.logger.info "Wrapped method #{self}##{method} - #{definition_location}"
         end
       end
     end
@@ -81,10 +78,10 @@ CODE
       definition_location = self.method(method)
       if (definition_location)
         definition_location = definition_location.source_location.first
-        TruestackMethodWrapper.path_wildcards.each do |path|
-          if (definition_location =~ /^#{Regexp.escape(path)}/)
-            TruestackClient.logger.info "HOW TO WRAP SELF. CALLS??  Wrapped method #{self}#self.#{method} - #{definition_location}"
-          end
+        path = Rails.root.to_s
+        #TruestackMethodWrapper.path_wildcards.each do |path|
+        if (definition_location =~ /^#{Regexp.escape(path)}/)
+          TruestackClient.logger.info "HOW TO WRAP SELF. CALLS??  Wrapped method #{self}#self.#{method} - #{definition_location}"
         end
       end
     end
