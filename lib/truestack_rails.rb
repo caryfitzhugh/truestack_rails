@@ -2,6 +2,16 @@ require 'truestack_rails/railtie_3_0'
 require 'truestack_rails/railtie_3_1'
 require 'truestack_rails/railtie_3_2'
 
+class Module
+  def included(klass)
+    if klass.respond_to?(:method_added)
+      self.instance_methods.each do |method|
+        klass.method_added(method)
+      end
+    end
+  end
+end
+
 module TruestackRails
   class Railtie < ::Rails::Railtie
     config.before_initialize do
@@ -69,7 +79,7 @@ module TruestackRails
             retval
           end
 CODE
-          TruestackClient.logger.info "Wrapped method #{self}##{method} - #{definition_location}"
+          ::Rails.logger.info "Wrapped method #{self}##{method} - #{definition_location}"
         end
       end
     end
@@ -81,12 +91,11 @@ CODE
         path = Rails.root.to_s
         #TruestackMethodWrapper.path_wildcards.each do |path|
         if (definition_location =~ /^#{Regexp.escape(path)}/)
-          TruestackClient.logger.info "HOW TO WRAP SELF. CALLS??  Wrapped method #{self}#self.#{method} - #{definition_location}"
+          ::Rails.logger.info "HOW TO WRAP SELF. CALLS??  Wrapped method #{self}#self.#{method} - #{definition_location}"
         end
       end
     end
   end
-
 end
 
 class Module
