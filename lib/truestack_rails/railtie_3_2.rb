@@ -41,7 +41,11 @@ module TruestackRails
         TruestackRails.reset_methods
 
         TruestackClient.logger.info( "#{args[:controller_name]}##{args[:action_name]} #{tstart.to_i}, #{tend.to_i}, #{results}")
-        TruestackClient.request("#{args[:controller_name]}##{args[:action_name]}", tstart.to_i, results)
+        begin
+          TruestackClient.request("#{args[:controller_name]}##{args[:action_name]}", tstart.to_i, results)
+        rescue Exception => e
+          TruestackClient.logger.error "Exception on request: #{e}"
+        end
       end
     end
   end
