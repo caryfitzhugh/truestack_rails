@@ -40,6 +40,7 @@ module TruestackRails
         results = TruestackRails.track_methods_results
         TruestackRails.reset_methods
 
+        TruestackClient.logger.info( "#{controller_name}##{action_name} #{stime.to_i}, #{results}")
         TruestackClient.request("#{controller_name}##{action_name}", stime.to_i, results)
       end
     end
