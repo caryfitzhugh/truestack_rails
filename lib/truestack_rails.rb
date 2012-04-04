@@ -90,7 +90,7 @@ module TruestackRails
       retval
     end
 CODE
-    @_ts_instrumented_methods << [klass, method]
+    self.instrumented_methods << [klass, method]
     ::Rails.logger.info "Wrapped method #{klass}##{method}"
   end
 
