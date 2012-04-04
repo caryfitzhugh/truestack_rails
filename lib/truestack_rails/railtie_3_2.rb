@@ -1,6 +1,3 @@
-require 'truestack_rails/logging_3_2_request'
-require 'truestack_rails/logging_3_2_exceptions'
-
 module TruestackRails
   module Railtie32
 
