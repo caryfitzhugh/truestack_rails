@@ -117,7 +117,8 @@ CODE
         definition_location = self.instance_method(method)
         if (definition_location)
           if (TruestackRails.instrument_method?(definition_location.source_location.first))
-            TruestackRails.instrument_method!(self, method, self.class._truestack_method_type)
+            binding.pry
+            TruestackRails.instrument_method!(self, method, self._truestack_method_type)
           end
         end
       end
@@ -130,6 +131,7 @@ CODE
         definition_location = self.method(method)
         if (definition_location)
           if (TruestackRails.instrument_method?(definition_location.source_location.first))
+            binding.pry
             TruestackRails.instrument_method!(self, method, self.class._truestack_method_type, true)
           end
         end
