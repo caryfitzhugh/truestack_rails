@@ -104,7 +104,7 @@ CODE
         definition_location = self.instance_method(method)
         if (definition_location)
           if (TruestackRails.instrument_method?(definition_location.source_location.first))
-            TruestackRails.instrument_method!(self, method)
+            TruestackRails.instrument_method!(self.class, method)
           end
         end
       end
