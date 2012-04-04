@@ -10,7 +10,7 @@ module TruestackRails
       ActionView::Base.send(:extend, TruestackRails::TruestackMethodWrapper)
 
       ActiveSupport::Notifications.subscribe("truestack.method_call") do |name, tstart, tend, id, data|
-        TruestackRails.track_called_method("#{data[:location].gsub(Rails.root.to_s, '') }", tstart, tend)
+        TruestackRails.track_called_method("#{data[:location].gsub(Rails.root.to_s, '') }:#{data[:klass]}##{data[:method]}", tstart, tend)
       end
 
       # Gets view rendering times
