@@ -130,7 +130,7 @@ CODE
         definition_location = self.method(method)
         if (definition_location)
           if (TruestackRails.instrument_method?(definition_location.source_location.first))
-            TruestackRails.instrument_method!(self, method, definition_location.source_location.first, true)
+            TruestackRails.instrument_method!(self, method, definition_location.source_location.first, false)
           end
         end
       end
