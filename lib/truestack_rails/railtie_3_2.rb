@@ -32,6 +32,9 @@ module TruestackRails
             rescue Exception => e
               ActiveSupport::Notifications.instrument("truestack.exception", :exception => e, :controller_name => controller_name, :action_name => action_name)
               raise e
+            rescue RuntimeError => e
+              ActiveSupport::Notifications.instrument("truestack.exception", :exception => e, :controller_name => controller_name, :action_name => action_name)
+              raise e
             end
           end
         end
