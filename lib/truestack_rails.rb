@@ -97,7 +97,6 @@ CODE
       klass.instance_eval code
     end
     ::Rails.logger.info "Klass is: #{klass}"
-    ::Rails.logger.info "Type is: #{type}"
     self.instrumented_methods << [klass, method]
     ::Rails.logger.info "Wrapped method #{klass}##{method}"
     ::Rails.logger.info "All wrapped: #{self.instrumented_methods.to_json}"
