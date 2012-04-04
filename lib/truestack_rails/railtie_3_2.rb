@@ -5,22 +5,25 @@ module TruestackRails
       TruestackClient.logger.info "Truestack Rail-Tie 3.2"
 
       ActionController::Base.send(:extend, TruestackRails::TruestackMethodWrapper)
-      ActionController::Base._truestack_method_type = "Controller"
+      ActionController::Base._truestack_method_type = "controller"
+
       ActionController::Metal.send(:extend, TruestackRails::TruestackMethodWrapper)
-      ActionController::Metal._truestack_method_type = "Controller"
+      ActionController::Metal._truestack_method_type = "controller"
+
       ActiveRecord::Base.send(:extend, TruestackRails::TruestackMethodWrapper)
-      ActiveRecord::Base._truestack_method_type = "Model"
+      ActiveRecord::Base._truestack_method_type = "model"
+
       ActionView::Base.send(:extend, TruestackRails::TruestackMethodWrapper)
-      ActiveView::Base._truestack_method_type = "Helper"
+      ActionView::Base._truestack_method_type = "helper"
 
       ActiveSupport::Notifications.subscribe("truestack.method_call") do |name, tstart, tend, id, data|
 
-        TruestackRails.track_called_method("##{data[:identifier].gsub(Rails.root.to_s, '') }", tstart, tend)
+        TruestackRails.track_called_method("#{data[:type]}|#{data[:identifier].gsub(Rails.root.to_s, '') }", tstart, tend)
       end
 
       # Gets view rendering times
       ActiveSupport::Notifications.subscribe("render_template.action_view") do |name, tstart, tend, id, data|
-        TruestackRails.track_called_method("view##{data[:identifier].gsub(Rails.root.to_s, '') }", tstart, tend)
+        TruestackRails.track_called_method("view|#{data[:identifier].gsub(Rails.root.to_s, '') }", tstart, tend)
         #["render_template.action_view", #2012-04-03 14:02:14 -0400, #2012-04-03 14:02:27 -0400, #"94898774de3422c89a7e", #{:identifier=> #  "/Users/cfitzhugh/working/truestack/truestack_fuzzinator/app/views/fuzz/action2.html.slim", # :layout=>"layouts/application"}]
       end
 
