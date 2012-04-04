@@ -46,14 +46,16 @@ module TruestackRails
   # These will track the methods
   def self.reset_methods
     @_ts_start_time = Time.now
-    @_ts_methods = Hash.new {|h,k| h[k] = [] }
+    @_ts_methods ||= Hash.new {|h,k| h[k] = [] }
   end
 
   def self.track_called_method(name, tstart, tend)
+    @_ts_methods ||= Hash.new {|h,k| h[k] = [] }
     @_ts_methods[name] << [tstart, tend]
   end
 
   def self.track_methods_results
+    @_ts_methods ||= Hash.new {|h,k| h[k] = [] }
     @_ts_methods
   end
 
