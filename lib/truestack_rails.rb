@@ -74,12 +74,12 @@ module TruestackRails
   end
 
   def self.instrument_method!(klass, method)
+  binding.pry
     klass.class_eval <<CODE
     alias :#{WRAPPED_METHOD_PREFIX}_#{method} :#{method}
     def #{method}(*args, &block)
       retval = nil
       ActiveSupport::Notifications.instrument("truestack.method_call") do
-binding.pry
 ::Rails.logger.info("Inside wrapped method call!")
         if block_given?
           retval = #{WRAPPED_METHOD_PREFIX}_#{method}(*args, &block)
@@ -104,7 +104,7 @@ CODE
         definition_location = self.instance_method(method)
         if (definition_location)
           if (TruestackRails.instrument_method?(definition_location.source_location.first))
-            TruestackRails.instrument_method!(self.class, method)
+            TruestackRails.instrument_method!(self, method)
           end
         end
       end
