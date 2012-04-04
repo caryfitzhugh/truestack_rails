@@ -74,7 +74,7 @@ module TruestackRails
         retval
       end
 CODE
-      ::Rails.logger.info "Wrapped method #{self}##{method} - #{definition_location}"
+      ::Rails.logger.info "Wrapped method #{self}##{method}"
     end
 
     def self._truestack_instrument_method?(definition_location)
