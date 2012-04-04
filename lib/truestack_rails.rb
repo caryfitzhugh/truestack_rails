@@ -80,7 +80,7 @@ CODE
     def self._truestack_instrument_method?(definition_location)
       instrument = false
       TruestackClient.config.code.each do |path|
-        if (definition_location =~ /^#{Regexp.escape(code_path)}/)
+        if (definition_location =~ /^#{Regexp.escape(path)}/)
           instrument = true
         end
       end
