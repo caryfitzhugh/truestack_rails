@@ -92,6 +92,7 @@ module TruestackRails
 CODE
     self.instrumented_methods << [klass, method]
     ::Rails.logger.info "Wrapped method #{klass}##{method}"
+    ::Rails.logger.info "All wrapped: #{self.instrumented_methods.to_json}"
   end
 
   def self.instrumented_methods
