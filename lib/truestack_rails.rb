@@ -79,8 +79,6 @@ module TruestackRails
     def #{method}(*args, &block)
       retval = nil
       ActiveSupport::Notifications.instrument("truestack.method_call", :klass=>self, :method=>:#{method}, :location=>'#{location}') do
-::Rails.logger.info("Inside wrapped method call!")
-#{do_class_eval ? 'binding.pry' : ''}
         if block_given?
           retval = #{WRAPPED_METHOD_PREFIX}_#{method}(*args, &block)
         else
@@ -94,13 +92,11 @@ CODE
     if ( do_class_eval )
       klass.class_eval code
     else
-      binding.pry
       klass.instance_eval code
     end
-    ::Rails.logger.info "Klass is: #{klass}"
+
     self.instrumented_methods << [klass, method]
     ::Rails.logger.info "Wrapped method #{klass}##{method}"
-    ::Rails.logger.info "All wrapped: #{self.instrumented_methods.to_json}"
   end
 
   def self.instrumented_methods
