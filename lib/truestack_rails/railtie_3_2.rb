@@ -10,6 +10,7 @@ module TruestackRails
       ActionView::Base.send(:extend, TruestackRails::TruestackMethodWrapper)
 
       ActiveSupport::Notifications.subscribe("truestack.method_call") do |name, tstart, tend, id, data|
+::Rails.logger.info "Caught method_call notification"
         TruestackRails.track_called_method("view##{data[:identifier].gsub(Rails.root.to_s, '') }", tstart, tend)
       end
 
