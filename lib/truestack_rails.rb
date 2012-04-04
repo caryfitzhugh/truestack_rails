@@ -80,7 +80,7 @@ module TruestackRails
       retval = nil
       ActiveSupport::Notifications.instrument("truestack.method_call", :klass=>self, :method=>:#{method}, :location=>'#{location}') do
 ::Rails.logger.info("Inside wrapped method call!")
-#{do_class_eval ? '' : 'binding.pry'}
+#{do_class_eval ? 'binding.pry' : ''}
         if block_given?
           retval = #{WRAPPED_METHOD_PREFIX}_#{method}(*args, &block)
         else
