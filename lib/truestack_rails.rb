@@ -77,9 +77,6 @@ CODE
       ::Rails.logger.info "Wrapped method #{self}##{method} - #{definition_location}"
     end
 
-    def _truestack_instrument_method?(definition_location)
-      self._truestack_instrument_method?(definition_location)
-    end
     def self._truestack_instrument_method?(definition_location)
       instrument = false
       TruestackClient.code.each do |path|
@@ -99,7 +96,7 @@ CODE
         puts 'instrumenting...'
         definition_location = self.instance_method(method)
         if (definition_location)
-          if (_truestack_instrument_method?(definition_location.source_location.first))
+          if (TruestackMethodWrapper._truestack_instrument_method?(definition_location.source_location.first))
             _truestack_wrap_method(method)
           end
         end
@@ -112,7 +109,7 @@ CODE
       else
         definition_location = self.method(method)
         if (definition_location)
-          if (_truestack_instrument_method?(definition_location.source_location.first))
+          if (TruestackMethodWrapper._truestack_instrument_method?(definition_location.source_location.first))
             #_truestack_wrap_method(method)
             ::Rails.logger.info "HOW TO WRAP SELF. CALLS??  Wrapped method #{self}#self.#{method} - #{definition_location}"
           end
