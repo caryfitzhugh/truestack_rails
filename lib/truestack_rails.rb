@@ -115,7 +115,7 @@ CODE
         definition_location = self.instance_method(method)
         if (definition_location)
           if (TruestackRails.instrument_method?(definition_location.source_location.first))
-            TruestackRails.instrument_method!(self, method, false)
+            TruestackRails.instrument_method!(self, method)
           end
         end
       end
@@ -128,8 +128,7 @@ CODE
         definition_location = self.method(method)
         if (definition_location)
           if (TruestackRails.instrument_method?(definition_location.source_location.first))
-            #_truestack_wrap_method(method)
-            ::Rails.logger.info "Wrapped method #{self}#self.#{method} - #{definition_location}"
+            TruestackRails.instrument_method!(self, method, true)
           end
         end
       end
