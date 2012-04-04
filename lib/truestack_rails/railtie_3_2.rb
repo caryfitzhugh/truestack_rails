@@ -6,7 +6,7 @@ module TruestackRails
 
       TruestackRails.instrument_methods(ActionController::Base,  'controller')
       TruestackRails.instrument_methods(ActionController::Metal, 'controller')
-      TruestackRails.instrument_methods(ActiveRecord::Base,      'model'
+      TruestackRails.instrument_methods(ActiveRecord::Base,      'model')
       TruestackRails.instrument_methods(ActionView::Base,        'helpers')
 
       ActiveSupport::Notifications.subscribe("truestack.method_call") do |name, tstart, tend, id, data|
