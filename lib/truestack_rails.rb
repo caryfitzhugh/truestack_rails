@@ -117,6 +117,7 @@ CODE
         if (definition_location)
           if (TruestackRails.instrument_method?(definition_location.source_location.first))
             #_truestack_wrap_method(method)
+            binding.pry
             ::Rails.logger.info "HOW TO WRAP SELF. CALLS??  Wrapped method #{self}#self.#{method} - #{definition_location}"
           end
         end
