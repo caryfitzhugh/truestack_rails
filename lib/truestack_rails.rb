@@ -73,14 +73,14 @@ module TruestackRails
     instrument
   end
 
-  def self.instrument_method!(klass, method, location, class_eval = true)
+  def self.instrument_method!(klass, method, location, do_class_eval = true)
     code = <<CODE
     alias :#{WRAPPED_METHOD_PREFIX}_#{method} :#{method}
     def #{method}(*args, &block)
       retval = nil
       ActiveSupport::Notifications.instrument("truestack.method_call", :klass=>self, :method=>:#{method}, :location=>'#{location}') do
 ::Rails.logger.info("Inside wrapped method call!")
-#{class_eval ? '' : 'binding.pry'}
+#{do_class_eval ? '' : 'binding.pry'}
         if block_given?
           retval = #{WRAPPED_METHOD_PREFIX}_#{method}(*args, &block)
         else
@@ -91,7 +91,7 @@ module TruestackRails
     end
 CODE
 
-    if ( class_eval )
+    if ( do_class_eval )
       klass.class_eval code
     else
       binding.pry
