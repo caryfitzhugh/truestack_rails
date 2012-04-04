@@ -41,7 +41,7 @@ module TruestackRails
       end
 
       ActiveSupport::Notifications.subscribe("truestack.exception") do |name, tstart, tend, id, args|
-        TruestackClient.logger.info( "#{args[:controller_name]}##{args[:action_name]} !!#{args[:exception]}, #{tstart.to_i}, #{tend.to_i}, #{results}")
+        TruestackClient.logger.info( "#{args[:controller_name]}##{args[:action_name]} !!#{args[:exception]}, #{tstart.to_i}, #{tend.to_i}")
       end
 
       ActiveSupport::Notifications.subscribe("truestack.request") do |name, tstart, tend, id, args|
