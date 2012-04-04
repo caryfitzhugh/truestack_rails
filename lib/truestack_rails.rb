@@ -90,6 +90,7 @@ module TruestackRails
       retval
     end
 CODE
+    ::Rails.logger.info "Klass is: #{klass}"
     self.instrumented_methods << [klass, method]
     ::Rails.logger.info "Wrapped method #{klass}##{method}"
     ::Rails.logger.info "All wrapped: #{self.instrumented_methods.to_json}"
