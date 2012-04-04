@@ -108,9 +108,7 @@ CODE
   end
 
   module TruestackMethodWrapper
-    class << self
-      attr_accessor :_truestack_method_type
-    end
+    attr_accessor :_truestack_method_type
 
     def method_added(method)
       if (method.to_s =~ /^#{WRAPPED_METHOD_PREFIX}/)
