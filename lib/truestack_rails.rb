@@ -74,7 +74,7 @@ module TruestackRails
   end
 
   def self.instrument_method!(klass, method)
-  binding.pry
+    binding.pry
     klass.class_eval <<CODE
     alias :#{WRAPPED_METHOD_PREFIX}_#{method} :#{method}
     def #{method}(*args, &block)
