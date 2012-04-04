@@ -73,13 +73,12 @@ module TruestackRails
     instrument
   end
 
-  def self.instrument_method!(klass, method, class_eval = true)
-
+  def self.instrument_method!(klass, method, type, class_eval = true)
     code = <<CODE
     alias :#{WRAPPED_METHOD_PREFIX}_#{method} :#{method}
     def #{method}(*args, &block)
       retval = nil
-      ActiveSupport::Notifications.instrument("truestack.method_call") do
+      ActiveSupport::Notifications.instrument("truestack.method_call", :klass=>self, :method=>:#{method}) do
 ::Rails.logger.info("Inside wrapped method call!")
         if block_given?
           retval = #{WRAPPED_METHOD_PREFIX}_#{method}(*args, &block)
@@ -98,6 +97,7 @@ CODE
       klass.instance_eval code
     end
     ::Rails.logger.info "Klass is: #{klass}"
+    ::Rails.logger.info "Type is: #{type}"
     self.instrumented_methods << [klass, method]
     ::Rails.logger.info "Wrapped method #{klass}##{method}"
     ::Rails.logger.info "All wrapped: #{self.instrumented_methods.to_json}"
@@ -108,6 +108,10 @@ CODE
   end
 
   module TruestackMethodWrapper
+    class << self
+      attr_accessor :_truestack_method_type
+    end
+
     def method_added(method)
       if (method.to_s =~ /^#{WRAPPED_METHOD_PREFIX}/)
         return
@@ -115,7 +119,7 @@ CODE
         definition_location = self.instance_method(method)
         if (definition_location)
           if (TruestackRails.instrument_method?(definition_location.source_location.first))
-            TruestackRails.instrument_method!(self, method)
+            TruestackRails.instrument_method!(self, method, self.class._truestack_method_type)
           end
         end
       end
@@ -128,7 +132,7 @@ CODE
         definition_location = self.method(method)
         if (definition_location)
           if (TruestackRails.instrument_method?(definition_location.source_location.first))
-            TruestackRails.instrument_method!(self, method, true)
+            TruestackRails.instrument_method!(self, method, self.class._truestack_method_type, true)
           end
         end
       end

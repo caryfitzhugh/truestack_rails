@@ -5,13 +5,17 @@ module TruestackRails
       TruestackClient.logger.info "Truestack Rail-Tie 3.2"
 
       ActionController::Base.send(:extend, TruestackRails::TruestackMethodWrapper)
+      ActionController::Base._truestack_method_type = "Controller"
       ActionController::Metal.send(:extend, TruestackRails::TruestackMethodWrapper)
+      ActionController::Metal._truestack_method_type = "Controller"
       ActiveRecord::Base.send(:extend, TruestackRails::TruestackMethodWrapper)
+      ActiveRecord::Base._truestack_method_type = "Model"
       ActionView::Base.send(:extend, TruestackRails::TruestackMethodWrapper)
+      ActiveView::Base._truestack_method_type = "Helper"
 
       ActiveSupport::Notifications.subscribe("truestack.method_call") do |name, tstart, tend, id, data|
-::Rails.logger.info "Caught method_call notification"
-        TruestackRails.track_called_method("view##{data[:identifier].gsub(Rails.root.to_s, '') }", tstart, tend)
+
+        TruestackRails.track_called_method("##{data[:identifier].gsub(Rails.root.to_s, '') }", tstart, tend)
       end
 
       # Gets view rendering times
