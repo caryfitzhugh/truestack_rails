@@ -28,7 +28,7 @@ module TruestackRails
       c.secret = data[:secret]
       c.key    = data[:key]
       c.logger = Rails.logger
-      c.code   = data[:code]
+      c.code   = (data[:code] || []).map {|p| Rails.root.join(p).to_s }
     end
 
     case (::Rails.version.to_f * 10.0).to_i / 10.0
@@ -86,6 +86,7 @@ puts "instrument: #{definition_location} -- #{path}"
         end
       end
 
+puts "instrumenting... #{instrument}"
       instrument
     end
     def method_added(method)
@@ -95,7 +96,6 @@ puts "instrument: #{definition_location} -- #{path}"
       if (method.to_s =~ /^#{WRAPPED_METHOD_PREFIX}/)
         return
       else
-        puts 'instrumenting...'
         definition_location = self.instance_method(method)
         if (definition_location)
           if (TruestackMethodWrapper._truestack_instrument_method?(definition_location.source_location.first))
