@@ -74,7 +74,7 @@ module TruestackRails
   end
 
   def self.instrument_method!(klass, method)
-    binding.pry
+
     klass.class_eval <<CODE
     alias :#{WRAPPED_METHOD_PREFIX}_#{method} :#{method}
     def #{method}(*args, &block)
@@ -90,8 +90,10 @@ module TruestackRails
       retval
     end
 CODE
+    @_ts_instrumented_methods << [klass, method]
     ::Rails.logger.info "Wrapped method #{klass}##{method}"
   end
+
   def self.instrumented_methods
     @_ts_instrumented_methods ||= []
   end
