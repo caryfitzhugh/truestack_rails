@@ -4,19 +4,20 @@ module TruestackRails
     def self.connect!
       TruestackClient.logger.info "Truestack Rail-Tie 3.2"
 
-      ActionController::Base.send(:extend, TruestackRails::TruestackMethodWrapper)
-      ActionController::Metal.send(:extend, TruestackRails::TruestackMethodWrapper)
-      ActiveRecord::Base.send(:extend, TruestackRails::TruestackMethodWrapper)
-      ActionView::Base.send(:extend, TruestackRails::TruestackMethodWrapper)
+      TruestackRails.instrument_methods(ActionController::Base,  'controller')
+      TruestackRails.instrument_methods(ActionController::Metal, 'controller')
+      TruestackRails.instrument_methods(ActiveRecord::Base,      'model'
+      TruestackRails.instrument_methods(ActionView::Base,        'helpers')
 
       ActiveSupport::Notifications.subscribe("truestack.method_call") do |name, tstart, tend, id, data|
-        TruestackRails.track_called_method("#{data[:location].gsub(Rails.root.to_s, '') }:#{data[:klass]}##{data[:method]}", tstart, tend)
+        name = TruestackRails.classify_path(data[:location])
+        TruestackRails.track_called_method("#{name}/#{data[:klass]}##{data[:method]}", tstart, tend)
       end
 
       # Gets view rendering times
       ActiveSupport::Notifications.subscribe("render_template.action_view") do |name, tstart, tend, id, data|
-        TruestackRails.track_called_method("#{data[:identifier].gsub(Rails.root.to_s, '') }", tstart, tend)
-        #["render_template.action_view", #2012-04-03 14:02:14 -0400, #2012-04-03 14:02:27 -0400, #"94898774de3422c89a7e", #{:identifier=> #  "/Users/cfitzhugh/working/truestack/truestack_fuzzinator/app/views/fuzz/action2.html.slim", # :layout=>"layouts/application"}]
+        name = TruestackRails.classify_path(data[:identifier])
+        TruestackRails.track_called_method("#{name}", tstart, tend)
       end
 
       ApplicationController.class_eval do
@@ -34,6 +35,10 @@ module TruestackRails
             end
           end
         end
+      end
+
+      ActiveSupport::Notifications.subscribe("truestack.exception") do |name, tstart, tend, id, args|
+        TruestackClient.logger.info( "#{args[:controller_name]}##{args[:action_name]} !!#{args[:exception]}, #{tstart.to_i}, #{tend.to_i}, #{results}")
       end
 
       ActiveSupport::Notifications.subscribe("truestack.request") do |name, tstart, tend, id, args|

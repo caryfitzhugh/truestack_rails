@@ -43,6 +43,15 @@ module TruestackRails
     end
   end
 
+  def self.instrument_methods(klass, type)
+    klass.send(:extend, TruestackRails::TruestackMethodWrapper)
+  end
+
+  def self.classify_path(path)
+    path = path.gsub(Rails.root.to_s, '')
+    path
+  end
+
   # These will track the methods
   def self.reset_methods
     @_ts_start_time = Time.now
