@@ -80,10 +80,12 @@ CODE
     def self._truestack_instrument_method?(definition_location)
       instrument = false
       TruestackClient.config.code.each do |path|
+puts "instrument: #{definition_location} -- #{path}"
         if (definition_location =~ /^#{Regexp.escape(path)}/)
           instrument = true
         end
       end
+
       instrument
     end
     def method_added(method)
