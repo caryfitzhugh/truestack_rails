@@ -46,7 +46,7 @@ module TruestackRails
   # These will track the methods
   def self.reset_methods
     @_ts_start_time = Time.now
-    @_ts_methods ||= Hash.new {|h,k| h[k] = [] }
+    @_ts_methods = Hash.new {|h,k| h[k] = [] }
   end
 
   def self.track_called_method(name, tstart, tend)
@@ -79,6 +79,7 @@ module TruestackRails
     def #{method}(*args, &block)
       retval = nil
       ActiveSupport::Notifications.instrument("truestack.method_call") do
+binding.pry
 ::Rails.logger.info("Inside wrapped method call!")
         if block_given?
           retval = #{WRAPPED_METHOD_PREFIX}_#{method}(*args, &block)
