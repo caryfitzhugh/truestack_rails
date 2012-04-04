@@ -94,6 +94,7 @@ CODE
     if ( class_eval )
       klass.class_eval code
     else
+      binding.pry
       klass.instance_eval code
     end
     ::Rails.logger.info "Klass is: #{klass}"
