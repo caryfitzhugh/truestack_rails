@@ -73,9 +73,9 @@ module TruestackRails
     instrument
   end
 
-  def self.instrument_method!(klass, method)
+  def self.instrument_method!(klass, method, class_eval = true)
 
-    klass.class_eval <<CODE
+    code = <<CODE
     alias :#{WRAPPED_METHOD_PREFIX}_#{method} :#{method}
     def #{method}(*args, &block)
       retval = nil
@@ -90,6 +90,12 @@ module TruestackRails
       retval
     end
 CODE
+
+    if ( class_eval )
+      klass.class_eval code
+    else
+      klass.instance_eval code
+    end
     ::Rails.logger.info "Klass is: #{klass}"
     self.instrumented_methods << [klass, method]
     ::Rails.logger.info "Wrapped method #{klass}##{method}"
@@ -108,7 +114,7 @@ CODE
         definition_location = self.instance_method(method)
         if (definition_location)
           if (TruestackRails.instrument_method?(definition_location.source_location.first))
-            TruestackRails.instrument_method!(self, method)
+            TruestackRails.instrument_method!(self, method, false)
           end
         end
       end
@@ -122,8 +128,7 @@ CODE
         if (definition_location)
           if (TruestackRails.instrument_method?(definition_location.source_location.first))
             #_truestack_wrap_method(method)
-            binding.pry
-            ::Rails.logger.info "HOW TO WRAP SELF. CALLS??  Wrapped method #{self}#self.#{method} - #{definition_location}"
+            ::Rails.logger.info "Wrapped method #{self}#self.#{method} - #{definition_location}"
           end
         end
       end
