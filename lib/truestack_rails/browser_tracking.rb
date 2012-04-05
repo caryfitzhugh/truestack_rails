@@ -6,6 +6,10 @@ module TruestackRails
       img_url.query = "TrueStack-Access-Key=#{TruestackClient.config.key}&type=browser"
       return <<JS
 <script>
+// Truestack.com
+// Greenfrylabs.com
+// 2012
+
 var _truestack_browser_data = {
   tstart: new Date(),
   tloaded: null,
@@ -21,10 +25,10 @@ window.onload = function() {
   _truestack_browser_data.tready = new Date();
 
   var newimg = document.createElement('img');
-  newimg.setAttribute("style", "position:absolute; left: -1000px; top: -1000px;");
+  newimg.setAttribute("style", "height:1px; width:1px");
   newimg.setAttribute("src","#{img_url}&tstart="+_truestack_browser_data.tstart+"&tloaded="+_truestack_browser_data.tloaded+"&tready="+_truestack_browser_data.tready);
-  console.log(newimg);
-  document.appendChild(newimg);
+
+  document.body.appendChild(newimg);
 }
 
 
