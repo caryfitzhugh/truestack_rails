@@ -1,18 +1,14 @@
 require 'truestack_rails/railtie_3_0'
 require 'truestack_rails/railtie_3_1'
 require 'truestack_rails/railtie_3_2'
-
-class Module
-  def included(klass)
-    if klass.respond_to?(:method_added)
-      self.instance_methods.each do |method|
-        klass.method_added(method)
-      end
-    end
-  end
-end
+require 'truestack_rails/instrument'
+require 'truestack_rails/method_tracking'
 
 module TruestackRails
+    # This is a prefix which is used so we don't re-wrap
+    # various methods.
+    WRAPPED_METHOD_PREFIX='_truestack'
+
   class Railtie < ::Rails::Railtie
     config.before_initialize do
       TruestackRails.init_rails
@@ -41,10 +37,16 @@ module TruestackRails
     else
       raise "Truestack does not support this version of Rails"
     end
-  end
 
-  def self.instrument_methods(klass, type)
-    klass.send(:extend, TruestackRails::TruestackMethodWrapper)
+    Module.class_eval do
+      def included(klass)
+        if klass.respond_to?(:method_added)
+          self.instance_methods.each do |method|
+            klass.method_added(method)
+          end
+        end
+      end
+    end
   end
 
   def self.classify_path(path)
@@ -66,90 +68,5 @@ module TruestackRails
   def self.track_methods_results
     @_ts_methods ||= Hash.new {|h,k| h[k] = [] }
     @_ts_methods
-  end
-
-  # These track which methods are wrapped
-  WRAPPED_METHOD_PREFIX='_truestack'
-
-  def self.instrument_method?(definition_location)
-    instrument = false
-    TruestackClient.config.code.each do |path|
-      if (definition_location =~ /^#{Regexp.escape(path)}/)
-        instrument = true
-      end
-    end
-
-    instrument
-  end
-
-  def self.instrument_method!(klass, method, location, do_class_eval = true)
-    code = <<CODE
-    alias :#{WRAPPED_METHOD_PREFIX}_#{method} :#{method}
-    def #{method}(*args, &block)
-      retval = nil
-      ActiveSupport::Notifications.instrument("truestack.method_call", :klass=>self, :method=>:#{method}, :location=>'#{location}') do
-puts "inside wrapped #{klass} #{method} call"
-        if block_given?
-          retval = #{WRAPPED_METHOD_PREFIX}_#{method}(*args, &block)
-        else
-          retval = #{WRAPPED_METHOD_PREFIX}_#{method}(*args)
-        end
-      end
-      retval
-    end
-CODE
-
-    if ( do_class_eval )
-      klass.class_eval code
-    else
-      klass.instance_eval code
-    end
-
-    self.instrumented_methods << [klass, method]
-    ::Rails.logger.info "Wrapped method #{klass}##{method}"
-  end
-
-  def self.instrumented_methods
-    @_ts_instrumented_methods ||= []
-  end
-
-  module TruestackMethodWrapper
-    attr_accessor :_truestack_method_type
-
-    def method_added(method)
-      if (method.to_s =~ /^#{WRAPPED_METHOD_PREFIX}/)
-        return
-      else
-        definition_location = self.instance_method(method)
-        if (definition_location)
-          if (TruestackRails.instrument_method?(definition_location.source_location.first))
-            TruestackRails.instrument_method!(self, method, definition_location.source_location.first)
-          end
-        end
-      end
-    end
-
-    def singleton_method_added(method)
-      if (method.to_s =~ /^#{WRAPPED_METHOD_PREFIX}/)
-        return
-      else
-        definition_location = self.method(method)
-        if (definition_location)
-          if (TruestackRails.instrument_method?(definition_location.source_location.first))
-            TruestackRails.instrument_method!(self, method, definition_location.source_location.first, false)
-          end
-        end
-      end
-    end
-  end
-end
-
-class Module
-  def included(klass)
-    if klass.respond_to?(:method_added)
-      self.instance_methods.each do |method|
-        klass.method_added(method)
-      end
-    end
   end
 end

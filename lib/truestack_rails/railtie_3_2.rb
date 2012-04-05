@@ -2,13 +2,12 @@ module TruestackRails
   module Railtie32
 
     def self.connect!
-      TruestackClient.logger.info "Truestack Rail-Tie 3.2"
+      TruestackRails::Instrument.instrument_methods(ActionController::Base,  'controller')
+      TruestackRails::Instrument.instrument_methods(ActionController::Metal, 'controller')
+      TruestackRails::Instrument.instrument_methods(ActiveRecord::Base,      'model')
+      TruestackRails::Instrument.instrument_methods(ActionView::Base,        'helpers')
 
-      TruestackRails.instrument_methods(ActionController::Base,  'controller')
-      TruestackRails.instrument_methods(ActionController::Metal, 'controller')
-      TruestackRails.instrument_methods(ActiveRecord::Base,      'model')
-      TruestackRails.instrument_methods(ActionView::Base,        'helpers')
-
+      # Track method calls
       ActiveSupport::Notifications.subscribe("truestack.method_call") do |name, tstart, tend, id, data|
         name = TruestackRails.classify_path(data[:location])
         TruestackRails.track_called_method("#{name}/#{data[:klass]}##{data[:method]}", tstart, tend)
@@ -20,6 +19,7 @@ module TruestackRails
         TruestackRails.track_called_method("#{name}", tstart, tend)
       end
 
+      # Setup the render / request handling
       ApplicationController.class_eval do
         prepend_around_filter :_truestack_request_logging_around_filter
 
@@ -40,10 +40,12 @@ module TruestackRails
         end
       end
 
+      # From that request handilng, catch exceptions
       ActiveSupport::Notifications.subscribe("truestack.exception") do |name, tstart, tend, id, args|
         TruestackClient.logger.info( "#{args[:controller_name]}##{args[:action_name]} !!#{args[:exception]}, #{tstart.to_i}, #{tend.to_i}")
       end
 
+      # From that request handilng, catch the request data.
       ActiveSupport::Notifications.subscribe("truestack.request") do |name, tstart, tend, id, args|
         results = TruestackRails.track_methods_results
         TruestackRails.reset_methods
