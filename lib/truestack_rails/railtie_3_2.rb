@@ -5,7 +5,11 @@ module TruestackRails
       TruestackRails::Instrument.instrument_methods(ActionController::Base,  'controller')
       TruestackRails::Instrument.instrument_methods(ActionController::Metal, 'controller')
       TruestackRails::Instrument.instrument_methods(ActiveRecord::Base,      'model')
+
+      # Add in the methods to allow you to track in the browser (do this before instrumenting the methods!)
+      ActionView::Base.send(:include, TruestackRails::BrowserTracking)
       TruestackRails::Instrument.instrument_methods(ActionView::Base,        'helpers')
+
 
       # Track method calls
       ActiveSupport::Notifications.subscribe("truestack.method_call") do |name, tstart, tend, id, data|
