@@ -1,9 +1,8 @@
 module TruestackRails
   module MethodTracking
-    self << class
-      attr_accessor '_truestack_method_type', '_truestack_path_filters'
+    class << self
+      attr_accessor :_truestack_method_type, :_truestack_path_filters
     end
-
     def method_added(method)
 puts "inside " + self.class._truestack_method_type
       if (method.to_s =~ /^#{TruestackRails::WRAPPED_METHOD_PREFIX}/)
