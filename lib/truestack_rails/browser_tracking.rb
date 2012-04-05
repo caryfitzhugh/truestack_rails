@@ -20,7 +20,10 @@ window.onload = function() {
   }
   _truestack_browser_data.tready = new Date();
 
-  document.append("<img src='#{img_url}&type=browser&'/>");
+  var newimg = document.createElement('img');
+  newdiv.setAttribute("style", "position:absolute; left: -1000px; top: -1000px;");
+  newdiv.setAttribute("src",'#{img_url}&type=browser&');
+  document.appendChild(newimg);
 }
 
 
