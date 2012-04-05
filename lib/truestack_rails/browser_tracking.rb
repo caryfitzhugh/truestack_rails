@@ -3,7 +3,7 @@ module TruestackRails
     def  truestack_browser_tracker
       img_url = URI.parse(TruestackClient.config.host)
       img_url.path = "/app/event"
-      img_url.query = "TrueStack-Access-Key=#{TruestackClient.config.key}&type='browser'"
+      img_url.query = "TrueStack-Access-Key=#{TruestackClient.config.key}&type=browser"
       return <<JS
 <script>
 var _truestack_browser_data = {
@@ -22,7 +22,8 @@ window.onload = function() {
 
   var newimg = document.createElement('img');
   newimg.setAttribute("style", "position:absolute; left: -1000px; top: -1000px;");
-  newimg.setAttribute("src","#{img_url}&type=browser&");
+  newimg.setAttribute("src","#{img_url}&tstart="+_truestack_browser_data.tstart+"&tloaded="+_truestack_browser_data.tloaded+"&tready="+_truestack_browser_data.tready);
+  console.log(newimg);
   document.appendChild(newimg);
 }
 
