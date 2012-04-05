@@ -4,8 +4,7 @@ module TruestackRails
       binding.pry
       img_url = URI.parse(TruestackClient.config.host)
       img_url.path = "/app/event"
-      img_url.query = {"TrueStack-Access-Key"=>TruestackClient.config.key,
-                       "type" => 'browser'}
+      img_url.query = "TrueStack-Access-Key=#{TruestackClient.config.key}&type='browser'"
       return <<JS
 <script>
 var _truestack_browser_data = {
