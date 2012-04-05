@@ -26,7 +26,7 @@ window.onload = function() {
 
   var newimg = document.createElement('img');
   newimg.setAttribute("style", "height:1px; width:1px");
-  newimg.setAttribute("src","#{img_url}&tstart="+_truestack_browser_data.tstart+"&tloaded="+_truestack_browser_data.tloaded+"&tready="+_truestack_browser_data.tready);
+  newimg.setAttribute("src","#{img_url}&tstart="+_truestack_browser_data.tstart.UTC() / 1000.0+"&tloaded="+_truestack_browser_data.tloaded.UTC() / 1000.0+"&tready="+_truestack_browser_data.tready.UTC() / 1000.0);
 
   document.body.appendChild(newimg);
 }
