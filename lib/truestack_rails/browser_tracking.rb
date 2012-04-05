@@ -3,7 +3,7 @@ module TruestackRails
     def  truestack_browser_tracker
       img_url = URI.parse(TruestackClient.config.host)
       img_url.path = "/app/browser_event"
-      img_url.query = "action=#{action_name}&controller=#{controller_name}&TrueStack-Access-Key=#{TruestackClient.config.key}"
+      img_url.query = "name=#{controller_name}##{action_name}&TrueStack-Access-Key=#{TruestackClient.config.key}"
       return <<JS
 <script>
 // Truestack.com
@@ -12,24 +12,21 @@ module TruestackRails
 
 var _truestack_browser_data = {
   tstart: new Date(),
-  tloaded: null,
-  tready:   null,
-  old_onload: window.onload
+  tend:   null,
+  existing_onload: window.onload
 };
 
 window.onload = function() {
-  _truestack_browser_data.tloaded = new Date();
-  if (_truestack_browser_data.old_onload) {
-    _truestack_browser_data.old_onload();
+  if (_truestack_browser_data.existing_onload) {
+    _truestack_browser_data.existing_onload();
   }
-  _truestack_browser_data.tready = new Date();
+  _truestack_browser_data.tend = new Date();
 
   var newimg = document.createElement('img');
   newimg.setAttribute("style", "height:1px; width:1px");
   newimg.setAttribute("src","#{img_url}"+
     "&tstart="+ _truestack_browser_data.tstart.getTime() / 1000.0+
-    "&tloaded="+_truestack_browser_data.tloaded.getTime() / 1000.0+
-    "&tready="+_truestack_browser_data.tready.getTime() / 1000.0);
+    "&tend="  +_truestack_browser_data.tend.getTime() / 1000.0);
 
   document.body.appendChild(newimg);
 }
