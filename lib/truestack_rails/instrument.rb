@@ -6,13 +6,10 @@ module TruestackRails
     # Will be wrapped with a _truestack method wrapper,
     # which will send out alerts through the Rails notification
     # system, and collected on each request.
-    def self.instrument_methods(klass, type, path_filter=nil)
+    def self.instrument_methods(klass, classification, path_filter=nil)
       klass.send(:extend, TruestackRails::MethodTracking)
-      klass.class_eval do
-        _truestack_method_type = type
-        _truestack_path_filters = path_filter || TruestackClient.config.code
-      end
-      puts klass._truestack_method_type
+      klass._truestack_method_classification = classification
+      klass._truestack_path_filters = path_filter || TruestackClient.config.code
     end
 
     # Should you instrument this method?
@@ -27,13 +24,13 @@ module TruestackRails
       instrument
     end
 
-    def self.instrument_method!(klass, method, location, do_class_eval = true)
+    def self.instrument_method!(klass, method, location, classification, do_class_eval = true)
       code =
 <<CODE
       alias :#{WRAPPED_METHOD_PREFIX}_#{method} :#{method}
       def #{method}(*args, &block)
         retval = nil
-        ActiveSupport::Notifications.instrument("truestack.method_call", :klass=>self, :method=>:#{method}, :location=>'#{location}') do
+        ActiveSupport::Notifications.instrument("truestack.method_call", :klass=>self, :method=>:#{method}, :classification => '#{classification}', :location=>'#{location}') do
 
           if block_given?
             retval = #{WRAPPED_METHOD_PREFIX}_#{method}(*args, &block)
