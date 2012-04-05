@@ -16,7 +16,9 @@ var _truestack_browser_data = {
 
 window.onload = function() {
   _truestack_browser_data.tloaded = new Date();
-  _truestack_browser_data.old_onload();
+  if (_truestack_browser_data.old_onload()) {
+    _truestack_browser_data.old_onload();
+  }
   _truestack_browser_data.tready = new Date();
 
   document.write("<img src='#{img_url}&type=browser&'/>");
