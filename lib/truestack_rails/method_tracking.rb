@@ -4,7 +4,7 @@ module TruestackRails
       attr_accessor :_truestack_method_type, :_truestack_path_filters
     end
     def method_added(method)
-puts "inside " + self.class._truestack_method_type
+puts "inside " + self._truestack_method_type
       if (method.to_s =~ /^#{TruestackRails::WRAPPED_METHOD_PREFIX}/)
         return
       else

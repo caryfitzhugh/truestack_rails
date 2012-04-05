@@ -12,7 +12,7 @@ module TruestackRails
         _truestack_method_type = type
         _truestack_path_filters = path_filter || TruestackClient.config.code
       end
-      puts klass.class._truestack_method_type
+      puts klass._truestack_method_type
     end
 
     # Should you instrument this method?
