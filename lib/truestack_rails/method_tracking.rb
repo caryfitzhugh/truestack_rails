@@ -1,7 +1,7 @@
 module TruestackRails
   module MethodTracking
     self << class
-      attr_accessor :_truestack_method_type, :_truestack_path_filters
+      attr_accessor '_truestack_method_type', '_truestack_path_filters'
     end
 
     def method_added(method)
