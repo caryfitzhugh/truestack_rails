@@ -3,7 +3,7 @@ module TruestackRails
     def  truestack_browser_tracker
       img_url = URI.parse(TruestackClient.config.host)
       img_url.path = "/app/browser_event"
-      img_url.query = "request_id=#{@truestack_request_id}&name=#{controller_name}|#{action_name}&TrueStack-Access-Key=#{TruestackClient.config.key}"
+      img_url.query = "request_id=#{@truestack_request_id}&name=#{controller_name}#{URI.escape('#')}#{action_name}&TrueStack-Access-Key=#{TruestackClient.config.key}"
       return <<JS
 <script>
 // Truestack.com
