@@ -30,14 +30,16 @@ module TruestackRails
         private
 
         def _truestack_request_logging_around_filter
-          ActiveSupport::Notifications.instrument("truestack.request", :controller_name => controller_name, :action_name => action_name) do
+          @truestack_request_id = SecureRandom.hex(8)
+          ActiveSupport::Notifications.instrument("truestack.request", :controller_name => controller_name, :action_name => action_name, :request_id=>@truestack_request_id) do
+            TruestackRails.reset_methods
             begin
               yield
             rescue Exception => e
-              ActiveSupport::Notifications.instrument("truestack.exception", :exception => e, :controller_name => controller_name, :action_name => action_name)
+              ActiveSupport::Notifications.instrument("truestack.exception", :exception => e, :controller_name => controller_name, :request_id=>@truestack_request_id, :action_name => action_name)
               raise e
             rescue RuntimeError => e
-              ActiveSupport::Notifications.instrument("truestack.exception", :exception => e, :controller_name => controller_name, :action_name => action_name)
+              ActiveSupport::Notifications.instrument("truestack.exception", :exception => e, :controller_name => controller_name, :request_id=>@truestack_request_id, :action_name => action_name)
               raise e
             end
           end
@@ -46,17 +48,16 @@ module TruestackRails
 
       # From that request handilng, catch exceptions
       ActiveSupport::Notifications.subscribe("truestack.exception") do |name, tstart, tend, id, args|
-        TruestackClient.logger.info( "#{args[:controller_name]}##{args[:action_name]} !!#{args[:exception]}, #{tstart.to_i}, #{tend.to_i}")
+        TruestackClient.logger.info( "#{args[:controller_name]}##{args[:action_name]} !!#{args[:exception]}, #{args[:request_id]}:#{tstart.to_i}, #{tend.to_i}")
       end
 
       # From that request handilng, catch the request data.
       ActiveSupport::Notifications.subscribe("truestack.request") do |name, tstart, tend, id, args|
         results = TruestackRails.track_methods_results
-        TruestackRails.reset_methods
 
-        TruestackClient.logger.info( "#{args[:controller_name]}##{args[:action_name]} #{tstart.to_i}, #{tend.to_i}, #{results.to_yaml}")
+        TruestackClient.logger.info( "#{args[:controller_name]}##{args[:action_name]} #{args[:request_id]}:#{tstart.to_i}, #{tend.to_i}, #{results.to_yaml}")
         begin
-          TruestackClient.request("#{args[:controller_name]}##{args[:action_name]}", tstart.to_i, results)
+          #TruestackClient.request("#{args[:controller_name]}##{args[:action_name]}", tstart.to_i, results)
         rescue Exception => e
           TruestackClient.logger.error "Exception on request: #{e}"
         end
