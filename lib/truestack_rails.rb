@@ -22,7 +22,6 @@ module TruestackRails
     TruestackClient.configure do |c|
       data = YAML.load_file("#{Rails.root}/config/truestack.yml").symbolize_keys
       c.host   = data[:host]
-      c.secret = data[:secret]
       c.key    = data[:key]
       c.logger = Rails.logger
       c.code   = (data[:code] || []).map {|p| Rails.root.join(p).to_s }
