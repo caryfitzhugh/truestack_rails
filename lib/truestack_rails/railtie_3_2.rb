@@ -13,14 +13,14 @@ module TruestackRails
 
       # Track method calls
       ActiveSupport::Notifications.subscribe("truestack.method_call") do |name, tstart, tend, id, data|
-        name = TruestackRails.classify_path(data[:location])
-        TruestackRails.track_called_method("#{data[:classification]}:#{name}/#{data[:klass]}##{data[:method]}", tstart, tend)
+        #/classification
+        TruestackRails.track_called_method("#{data[:klass]}##{data[:method]}", data[:classification], tstart, tend)
       end
 
       # Gets view rendering times
       ActiveSupport::Notifications.subscribe("render_template.action_view") do |name, tstart, tend, id, data|
         name = TruestackRails.classify_path(data[:identifier])
-        TruestackRails.track_called_method("view:#{name}", tstart, tend)
+        TruestackRails.track_called_method(name, 'view', tstart, tend)
       end
 
       # Setup the render / request handling
@@ -56,8 +56,9 @@ module TruestackRails
         results = TruestackRails.track_methods_results
 
         TruestackClient.logger.info( "#{args[:controller_name]}##{args[:action_name]} #{args[:request_id]}:#{tstart.to_i}, #{tend.to_i}, #{results.to_yaml}")
+
         begin
-          #TruestackClient.request("#{args[:controller_name]}##{args[:action_name]}", tstart.to_i, results)
+          TruestackClient.request("#{args[:controller_name]}##{args[:action_name]}", args[:request_id], results)
         rescue Exception => e
           TruestackClient.logger.error "Exception on request: #{e}"
         end
