@@ -14,7 +14,7 @@ module TruestackRails
       # Track method calls
       ActiveSupport::Notifications.subscribe("truestack.method_call") do |name, tstart, tend, id, data|
         #/classification
-        TruestackRails.track_called_method("#{data[:klass]}##{data[:method]}", data[:classification], tstart, tend)
+        TruestackRails.track_called_method("#{data[:klass].class.to_s}##{data[:method]}", data[:classification], tstart, tend)
       end
 
       # Gets view rendering times
