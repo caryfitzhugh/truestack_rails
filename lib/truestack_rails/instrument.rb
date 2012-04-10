@@ -56,6 +56,11 @@ module TruestackRails
       end
     end
 
+    def self.classify_path(path)
+      path = path.gsub(Rails.root.to_s, '')
+      path
+    end
+
     # Add the method instrumentation to this base class.
     # All methods which are defined inside path_filter
     # (or defaults if not provided)

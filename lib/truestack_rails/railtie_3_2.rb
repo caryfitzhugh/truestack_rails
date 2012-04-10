@@ -9,7 +9,7 @@ module TruestackRails
 
       # Gets view rendering times
       ActiveSupport::Notifications.subscribe("render_template.action_view") do |name, tstart, tend, id, data|
-        name = TruestackRails.classify_path(data[:identifier])
+        name = TruestackRails::Instrument.classify_path(data[:identifier])
         TruestackRails::MethodTracking.track_called_method(name, 'view', tstart, tend)
       end
 
