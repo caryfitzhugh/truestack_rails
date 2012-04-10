@@ -63,7 +63,7 @@ module TruestackRails
     # which will send out alerts through the Rails notification
     # system, and collected on each request.
     def self.instrument_methods(klass, classification, path_filter=nil)
-      klass.send(:extend, TruestackRails::Instrumentation::MethodInstrumentation)
+      klass.send(:extend, TruestackRails::Instrument::MethodInstrumentation)
       klass._truestack_method_classification = classification
       klass._truestack_path_filters = path_filter || TruestackClient.config.code
     end
