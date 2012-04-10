@@ -1,3 +1,5 @@
+require 'logger'
+
 module TruestackRails
   class Configuration
     class << self
@@ -14,7 +16,7 @@ module TruestackRails
         self.config[:key]
       end
       def logger
-        @logger ||= Rails::Logger.new((self.config[:logger_path] || Rails.root.join('log','truestack.log')))
+        @logger ||= Logger.new((self.config[:logger_path] || Rails.root.join('log','truestack.log')))
       end
       def config
         @config ||= YAML.load_file("#{Rails.root}/config/truestack.yml").symbolize_keys
