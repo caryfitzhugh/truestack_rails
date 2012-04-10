@@ -4,6 +4,7 @@ require 'truestack_rails/railtie_3_2'
 require 'truestack_rails/instrument'
 require 'truestack_rails/method_tracking'
 require 'truestack_rails/browser_tracking'
+require 'momentarily'
 
 module TruestackRails
     # This is a prefix which is used so we don't re-wrap
