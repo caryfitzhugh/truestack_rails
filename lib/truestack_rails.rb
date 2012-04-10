@@ -19,6 +19,9 @@ module TruestackRails
   ## Attach to all of the different events based
   # on what rails version you are
   def self.init_rails
+    ## Start up the momentarily thread
+    Momentarily.start
+
     TruestackClient.configure do |c|
       data = YAML.load_file("#{Rails.root}/config/truestack.yml").symbolize_keys
       c.host   = data[:host]
