@@ -65,7 +65,7 @@ module TruestackRails
     def self.instrument_methods(klass, classification, path_filter=nil)
       klass.send(:extend, TruestackRails::Instrument::MethodInstrumentation)
       klass._truestack_method_classification = classification
-      klass._truestack_path_filters = path_filter || TruestackClient.config.code
+      klass._truestack_path_filters = path_filter || TruestackClient::Configuration.code_paths
     end
 
     # Should you instrument this method?

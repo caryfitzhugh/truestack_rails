@@ -3,8 +3,8 @@ require 'logger'
 module TruestackRails
   class Configuration
     class << self
-      def code
-        @code ||= (self.config[:code] || []).map {|p| Rails.root.join(p).to_s }
+      def code_paths
+        @code ||= (self.config[:code_paths] || []).map {|p| Rails.root.join(p).to_s }
       end
       def environments
         @environments ||= [(self.config[:environments] || 'production')].flatten
