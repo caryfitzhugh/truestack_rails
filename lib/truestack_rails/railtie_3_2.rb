@@ -1,7 +1,7 @@
 module TruestackRails
   module Railtie32
     # Subscribe to all the notifications pushed out by things in the instrument method
-    def self.subscribe!(config)
+    def self.subscribe!
       # Track method calls
       ActiveSupport::Notifications.subscribe("truestack.method_call") do |name, tstart, tend, id, data|
         TruestackRails::MethodTracking.track_called_method("#{data[:klass].class.to_s}##{data[:method]}", data[:classification], tstart, tend)
@@ -41,7 +41,7 @@ module TruestackRails
 
     # Specify which classes to instrument and put various hooks in so that we can watch
     # what is going on in the application
-    def self.instrument!(config)
+    def self.instrument!
       TruestackRails::Instrument.instrument_methods(ActionController::Base,  'controller')
       TruestackRails::Instrument.instrument_methods(ActionController::Metal, 'controller')
       TruestackRails::Instrument.instrument_methods(ActiveRecord::Base,      'model')
