@@ -59,7 +59,7 @@ module TruestackRails
         def _truestack_request_logging_around_filter
           @truestack_request_id = SecureRandom.hex(8)
           ActiveSupport::Notifications.instrument("truestack.request", :controller_name => controller_name, :action_name => action_name, :request_id=>@truestack_request_id) do
-            TruestackRails.reset_methods
+            TruestackRails::MethodTracking.reset_methods
             begin
               yield
             rescue Exception => e
