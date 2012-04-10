@@ -1,5 +1,3 @@
-require 'truestack_rails/railtie_3_0'
-require 'truestack_rails/railtie_3_1'
 require 'truestack_rails/railtie_3_2'
 require 'truestack_rails/instrument'
 require 'truestack_rails/method_tracking'
