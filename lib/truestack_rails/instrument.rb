@@ -39,7 +39,7 @@ TruestackClient.logger.info "#{self}##{method}"
             end
           end
           rescue Exception => e
-            TruestackClient.logger.info "Exp: #{e}"
+            TruestackClient.logger.info "Exp: #{e} #{definition_location.source_location}"
           end
         end
       end
@@ -60,7 +60,7 @@ TruestackClient.logger.info "#{self}##{method}"
                 TruestackRails::Instrument.instrument_method!(self, method, loc, self._truestack_method_classification, false)
               end
             rescue Exception => e
-            TruestackClient.logger.info "self.exp: #{e}"
+            TruestackClient.logger.info "self.exp: #{e} #{definition_location.source_location}"
             end
           end
         end
