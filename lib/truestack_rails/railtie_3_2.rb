@@ -49,7 +49,22 @@ module TruestackRails
           end
         end
         def singleton_method_added(method)
-TruestackClient.logger.info "SINGLETON MODULE: #{self} - #{method}"
+          if (method.to_s =~ /^#{TruestackRails::WRAPPED_METHOD_PREFIX}/)
+            return
+          else
+            begin
+              definition_location = self.method(method)
+              if (definition_location)
+                loc = definition_location.source_location.first
+                filters = self._truestack_path_filters
+                if (TruestackRails::Instrument.instrument_method?(loc, filters))
+                  TruestackRails::Instrument.instrument_method!(self, method, loc, self._truestack_method_classification, false)
+                end
+              end
+            rescue Exception => e
+              TruestackClient.logger.error "self.#{self}##{method} Exp: #{e}"
+            end
+          end
         end
       end
       # Make everything that isn't specified a model level
