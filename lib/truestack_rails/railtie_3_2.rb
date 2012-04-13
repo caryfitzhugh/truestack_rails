@@ -58,6 +58,7 @@ module TruestackRails
                 loc = definition_location.source_location.first
                 filters = self._truestack_path_filters
                 if (TruestackRails::Instrument.instrument_method?(loc, filters))
+                  binding.pry
                   TruestackRails::Instrument.instrument_method!(self, method, loc, self._truestack_method_classification, false)
                 end
               end
