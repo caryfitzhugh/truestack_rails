@@ -29,17 +29,17 @@ module TruestackRails
         else
 
 TruestackClient.logger.info "#{self}##{method}"
-          begin
           definition_location = self.instance_method(method)
           if (definition_location)
+            begin
             loc = definition_location.source_location.first
             filters = self._truestack_path_filters
             if (TruestackRails::Instrument.instrument_method?(loc, filters))
               TruestackRails::Instrument.instrument_method!(self, method, loc, self._truestack_method_classification)
             end
-          end
-          rescue Exception => e
-            TruestackClient.logger.info "Exp: #{e} #{definition_location.source_location}"
+            rescue Exception => e
+              TruestackClient.logger.info "Exp: #{e} #{definition_location.source_location}"
+            end
           end
         end
       end
