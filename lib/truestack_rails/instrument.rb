@@ -27,6 +27,9 @@ module TruestackRails
         if (method.to_s =~ /^#{TruestackRails::WRAPPED_METHOD_PREFIX}/)
           return
         else
+
+TruestackClient.logger.info "#{self}##{method}"
+          begin
           definition_location = self.instance_method(method)
           if (definition_location)
             loc = definition_location.source_location.first
@@ -34,6 +37,9 @@ module TruestackRails
             if (TruestackRails::Instrument.instrument_method?(loc, filters))
               TruestackRails::Instrument.instrument_method!(self, method, loc, self._truestack_method_classification)
             end
+          end
+          rescue Exception => e
+            TruestackClient.logger.info "Exp: #{e}"
           end
         end
       end

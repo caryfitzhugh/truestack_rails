@@ -35,8 +35,6 @@ module TruestackRails
           end
         end
       end
-
-
     end
 
     # Specify which classes to instrument and put various hooks in so that we can watch
