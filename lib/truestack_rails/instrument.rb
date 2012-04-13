@@ -27,18 +27,17 @@ module TruestackRails
         if (method.to_s =~ /^#{TruestackRails::WRAPPED_METHOD_PREFIX}/)
           return
         else
-
-TruestackClient.logger.info "#{self}##{method}"
-          definition_location = self.instance_method(method)
-          if (definition_location)
-            begin
-            loc = definition_location.source_location.first
-            filters = self._truestack_path_filters
-            if (TruestackRails::Instrument.instrument_method?(loc, filters))
-              TruestackRails::Instrument.instrument_method!(self, method, loc, self._truestack_method_classification)
+          begin
+            definition_location = self.instance_method(method)
+            if (definition_location)
+              loc = definition_location.source_location.first
+              filters = self._truestack_path_filters
+              if (TruestackRails::Instrument.instrument_method?(loc, filters))
+                TruestackRails::Instrument.instrument_method!(self, method, loc, self._truestack_method_classification)
+              end
             end
             rescue Exception => e
-              TruestackClient.logger.info "Exp: #{e} #{definition_location.source_location}"
+              TruestackClient.logger.error "#{self}##{method} Exp: #{e}"
             end
           end
         end
@@ -50,17 +49,17 @@ TruestackClient.logger.info "#{self}##{method}"
         if (method.to_s =~ /^#{TruestackRails::WRAPPED_METHOD_PREFIX}/)
           return
         else
-          definition_location = self.method(method)
-          if (definition_location)
-  TruestackClient.logger.info "self.#{self}##{method}"
-            begin
-              loc = definition_location.source_location.first
-              filters = self._truestack_path_filters
-              if (TruestackRails::Instrument.instrument_method?(loc, filters))
-                TruestackRails::Instrument.instrument_method!(self, method, loc, self._truestack_method_classification, false)
+          begin
+            definition_location = self.method(method)
+            if (definition_location)
+                loc = definition_location.source_location.first
+                filters = self._truestack_path_filters
+                if (TruestackRails::Instrument.instrument_method?(loc, filters))
+                  TruestackRails::Instrument.instrument_method!(self, method, loc, self._truestack_method_classification, false)
+                end
               end
             rescue Exception => e
-            TruestackClient.logger.info "self.exp: #{e} #{definition_location.source_location}"
+              TruestackClient.logger.error "self.#{self}##{method} Exp: #{e}"
             end
           end
         end
