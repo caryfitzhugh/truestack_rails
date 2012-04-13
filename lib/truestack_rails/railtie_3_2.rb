@@ -56,10 +56,10 @@ module TruestackRails
               definition_location = self.method(method)
               if (definition_location)
                 loc = definition_location.source_location.first
-                filters = self._truestack_path_filters
+                filters = TruestackRails::Configuration.code_paths
+                classification = 'model'
                 if (TruestackRails::Instrument.instrument_method?(loc, filters))
-                  binding.pry
-                  TruestackRails::Instrument.instrument_method!(self, method, loc, self._truestack_method_classification, false)
+                  TruestackRails::Instrument.instrument_method!(self, method, loc, classification, false)
                 end
               end
             rescue Exception => e
