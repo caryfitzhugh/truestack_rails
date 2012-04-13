@@ -48,7 +48,7 @@ module TruestackRails
             end
           end
         end
-        def self.singleton_method_added(method)
+        def singleton_method_added(method)
 TruestackClient.logger.info "SINGLETON MODULE: #{self} - #{method}"
         end
       end
