@@ -34,15 +34,6 @@ module TruestackRails
         raise "Truestack does not support this version of Rails"
       end
 
-      Module.class_eval do
-        def included(klass)
-          if klass.respond_to?(:method_added)
-            self.instance_methods.each do |method|
-              klass.method_added(method)
-            end
-          end
-        end
-      end
     end
   end
 end

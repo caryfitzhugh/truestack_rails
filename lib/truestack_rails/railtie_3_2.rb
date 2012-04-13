@@ -40,6 +40,18 @@ module TruestackRails
     # Specify which classes to instrument and put various hooks in so that we can watch
     # what is going on in the application
     def self.instrument!
+      Module.class_eval do
+        def included(klass)
+          if klass.respond_to?(:method_added)
+            self.instance_methods.each do |method|
+              klass.method_added(method)
+            end
+          end
+        end
+        def self.singleton_method_added(method)
+TruestackClient.logger.info "SINGLETON MODULE: #{self} - #{method}"
+        end
+      end
       # Make everything that isn't specified a model level
       TruestackRails::Instrument.instrument_methods(Object,                  'model')
 
