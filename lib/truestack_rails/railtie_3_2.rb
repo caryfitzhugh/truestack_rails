@@ -42,7 +42,6 @@ module TruestackRails
     def self.instrument!
       # Make everything that isn't specified a model level
       TruestackRails::Instrument.instrument_methods(Object,                  'model')
-      TruestackRails::Instrument.instrument_methods(Module,                  'model')
 
       # Refine a few here!
       TruestackRails::Instrument.instrument_methods(ActionController::Base,  'controller')
