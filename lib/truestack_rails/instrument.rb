@@ -36,9 +36,8 @@ module TruestackRails
                 TruestackRails::Instrument.instrument_method!(self, method, loc, self._truestack_method_classification)
               end
             end
-            rescue Exception => e
-              TruestackClient.logger.error "#{self}##{method} Exp: #{e}"
-            end
+          rescue Exception => e
+            TruestackClient.logger.error "#{self}##{method} Exp: #{e}"
           end
         end
       end
