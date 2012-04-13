@@ -35,27 +35,57 @@ module TruestackRails
           end
         end
       end
-
-
     end
 
     # Specify which classes to instrument and put various hooks in so that we can watch
     # what is going on in the application
     def self.instrument!
+      Module.class_eval do
+        def included(klass)
+          if klass.respond_to?(:method_added)
+            self.instance_methods.each do |method|
+              klass.method_added(method)
+            end
+          end
+        end
+        def singleton_method_added(method)
+          if (method.to_s =~ /^#{TruestackRails::WRAPPED_METHOD_PREFIX}/)
+            return
+          else
+            begin
+              definition_location = self.method(method)
+              if (definition_location)
+                loc = definition_location.source_location.first
+                filters = TruestackRails::Configuration.code_paths
+                classification = 'model'
+                if (TruestackRails::Instrument.instrument_method?(loc, filters))
+                  TruestackRails::Instrument.instrument_method!(self, method, loc, classification, false)
+                end
+              end
+            rescue Exception => e
+              TruestackClient.logger.error "self.#{self}##{method} Exp: #{e}"
+            end
+          end
+        end
+      end
+      # Make everything that isn't specified a model level
+      TruestackRails::Instrument.instrument_methods(Object,                  'model')
+
+      # Refine a few here!
       TruestackRails::Instrument.instrument_methods(ActionController::Base,  'controller')
       TruestackRails::Instrument.instrument_methods(ActionController::Metal, 'controller')
-      TruestackRails::Instrument.instrument_methods(ActiveRecord::Base,      'model')
+      TruestackRails::Instrument.instrument_methods(ActionView::Base,        'helpers')
 
       # Add in the methods to allow you to track in the browser (do this before instrumenting the methods!)
       ActionView::Base.send(:include, TruestackRails::BrowserTracking)
-      TruestackRails::Instrument.instrument_methods(ActionView::Base,        'helpers')
 
       # Setup the render / request handling
       ApplicationController.class_eval do
+        # Match the WRAPPED_METHOD_PREFIX
         prepend_around_filter :_truestack_request_logging_around_filter
 
         private
-
+        # Match the WRAPPED_METHOD_PREFIX
         def _truestack_request_logging_around_filter
           @truestack_request_id = SecureRandom.hex(8)
           ActiveSupport::Notifications.instrument("truestack.request", :controller_name => controller_name, :action_name => action_name, :request_id=>@truestack_request_id) do
