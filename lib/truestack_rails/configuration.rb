@@ -15,6 +15,9 @@ module TruestackRails
       def key
         self.config[:key]
       end
+      def enable_browser_tracking?
+        !!self.config[:browser_tracking]
+      end
       def logger
         @logger ||= Logger.new((self.config[:logger_path] || Rails.root.join('log','truestack.log')))
       end
