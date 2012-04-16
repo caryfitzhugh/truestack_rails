@@ -1,7 +1,7 @@
 module TruestackRails
   module BrowserTracking
     def  truestack_browser_tracker
-      if TruestackRails.configuration.enable_browser_tracking?
+      if TruestackRails::Configuration.enable_browser_tracking?
         img_url = URI.parse(TruestackRails::Configuration.host)
         img_url.path = "/app/browser_event"
         img_url.query = {
