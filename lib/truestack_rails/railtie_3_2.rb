@@ -15,7 +15,8 @@ module TruestackRails
 
       # From that request handilng, catch exceptions
       ActiveSupport::Notifications.subscribe("truestack.exception") do |name, tstart, tend, id, args|
-        TruestackClient.logger.info( "#{args[:controller_name]}##{args[:action_name]} !!#{args[:exception]}, #{args[:request_id]}:#{tstart.to_i}, #{tend.to_i}")
+        # def self.exception(action_name, start_time, e, request_env)
+        TruestackClient.exception("#{args[:controller_name]}##{args[:action_name]}", tstart, args[:exception], args[:request].env  )
       end
 
       # From that request handilng, catch the request data.
@@ -93,10 +94,10 @@ module TruestackRails
             begin
               yield
             rescue Exception => e
-              ActiveSupport::Notifications.instrument("truestack.exception", :exception => e, :controller_name => controller_name, :request_id=>@truestack_request_id, :action_name => action_name)
+              ActiveSupport::Notifications.instrument("truestack.exception", :exception => e, :request => request,  :controller_name => controller_name, :request_id=>@truestack_request_id, :action_name => action_name)
               raise e
             rescue RuntimeError => e
-              ActiveSupport::Notifications.instrument("truestack.exception", :exception => e, :controller_name => controller_name, :request_id=>@truestack_request_id, :action_name => action_name)
+              ActiveSupport::Notifications.instrument("truestack.exception", :exception => e, :request => request,  :controller_name => controller_name, :request_id=>@truestack_request_id, :action_name => action_name)
               raise e
             end
           end
