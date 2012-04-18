@@ -16,6 +16,7 @@ module TruestackRails
       # From that request handilng, catch exceptions
       ActiveSupport::Notifications.subscribe("truestack.exception") do |name, tstart, tend, id, args|
         # def self.exception(action_name, start_time, e, request_env)
+        TruestackClient.logger.info( "#{args[:controller_name]}##{args[:action_name]} Exception: #{args.to_s}")
         TruestackClient.exception("#{args[:controller_name]}##{args[:action_name]}", tstart, args[:exception], args[:request].env  )
       end
 
