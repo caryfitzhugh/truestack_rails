@@ -35,4 +35,9 @@ module TruestackRails
 
     end
   end
+
+  def self.metric(name, value, meta_data = {})
+    TruestackClient.logger.info "Tracking metric: #{name} : #{value} : #{meta_data.to_json}"
+    TruestackClient.metric(Time.now, name.to_s, value.to_s, meta_data)
+  end
 end
