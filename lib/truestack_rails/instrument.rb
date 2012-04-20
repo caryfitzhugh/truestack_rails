@@ -4,6 +4,14 @@
 #
 module TruestackRails
   module Instrument
+    module UserDefined
+      def truestack_method(name, &block)
+        classification = klass._truestack_method_classification = classification
+        ActiveSupport::Notifications.instrument("truestack.method_call", :klass=>self, :method=>name,  :classification => classification) do
+          block.call
+        end
+      end
+    end
     module MethodInstrumentation
       [:_truestack_method_classification, :_truestack_path_filters].each do |meth|
         define_method(meth) do
@@ -77,6 +85,7 @@ module TruestackRails
     # system, and collected on each request.
     def self.instrument_methods(klass, classification, path_filter=nil)
       klass.send(:extend, TruestackRails::Instrument::MethodInstrumentation)
+      klass.send(:include, TruestackRails::Instrument::UserDefined)
       klass._truestack_method_classification = classification
       klass._truestack_path_filters = path_filter || TruestackRails::Configuration.code_paths
     end

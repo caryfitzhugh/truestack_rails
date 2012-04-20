@@ -32,7 +32,6 @@ module TruestackRails
       else
         raise "Truestack does not support this version of Rails"
       end
-
     end
   end
 
