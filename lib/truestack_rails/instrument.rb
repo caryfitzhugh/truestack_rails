@@ -6,7 +6,8 @@ module TruestackRails
   module Instrument
     module UserDefined
       def truestack_method(name, &block)
-        classification = self._truestack_method_classification = classification
+        binding.pry
+        classification = self._truestack_method_classification
         ActiveSupport::Notifications.instrument("truestack.method_call", :klass=>self, :method=>name,  :classification => classification) do
           block.call
         end
