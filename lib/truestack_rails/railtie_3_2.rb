@@ -46,6 +46,20 @@ module TruestackRails
           end
         end
       end
+
+      ActiveSupport::Notifications.subscribe("truestack.metric") do |name, tstart, tend, id, args|
+        TruestackClient.logger.info "Tracking metric: #{args[:name]} : #{args[:value]} : #{args[:meta_data].to_json}"
+
+        if (TruestackRails::Configuration.environments.include?(Rails.env))
+          Momentarily.next_tick do
+            begin
+              TruestackClient.metric(tstart, args[:name], args[:value], args[:meta_data])
+            rescue Exception => e
+              TruestackClient.logger.error "Exception on metric: #{e}"
+            end
+          end
+        end
+      end
     end
 
     # Specify which classes to instrument and put various hooks in so that we can watch
