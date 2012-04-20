@@ -32,7 +32,6 @@ module TruestackRails
       # From that request handilng, catch the request data.
       # Push into momentarily - so we can defer to the next_tick - so we don't block on the request.
       ActiveSupport::Notifications.subscribe("truestack.request") do |name, tstart, tend, id, args|
-        binding.pry
         results = TruestackRails::MethodTracking.track_methods_results
 
         TruestackClient.logger.info( "#{args[:controller_name]}##{args[:action_name]} #{args[:request_id]}:#{tstart.to_i}, #{tend.to_i}, #{results.to_yaml}")
@@ -48,13 +47,13 @@ module TruestackRails
         end
       end
 
-      ActiveSupport::Notifications.subscribe("truestack.metric") do |name, tstart, tend, id, args|
+      ActiveSupport::Notifications.subscribe("truestack.metric") do |name, args|
         TruestackClient.logger.info "Tracking metric: #{args[:name]} : #{args[:value]} : #{args[:meta_data].to_json}"
 
         if (TruestackRails::Configuration.environments.include?(Rails.env))
           Momentarily.next_tick do
             begin
-              TruestackClient.metric(tstart, args[:name], args[:value], args[:meta_data])
+              TruestackClient.metric(args[:tstart], args[:name], args[:value], args[:meta_data])
             rescue Exception => e
               TruestackClient.logger.error "Exception on metric: #{e}"
             end

@@ -36,6 +36,6 @@ module TruestackRails
   end
 
   def self.metric(name, value, meta_data = {})
-    ActiveSupport::Notifications.publish("truestack.request", :name => name, :value => value, :meta_data=>meta_data)
+    ActiveSupport::Notifications.publish("truestack.request", :tstart => Time.now, :name => name, :value => value, :meta_data=>meta_data)
   end
 end
