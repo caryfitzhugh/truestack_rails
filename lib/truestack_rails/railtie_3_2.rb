@@ -124,6 +124,8 @@ module TruestackRails
               ActiveSupport::Notifications.instrument("truestack.exception", :exception => e, :request => request,  :controller_name => controller_name, :request_id=>@truestack_request_id, :action_name => action_name)
               raise e
             end
+
+            TruestackRails.report_once!
           end
         end
       end
