@@ -5,8 +5,8 @@ module TruestackRails
     def self.report_once!
       if (!@_truestack_sent_report)
         @_truestack_sent_report = Time.now
+        self.report!
       end
-      self.report!
     end
     def self.report!
       Momentarily.next_tick do
