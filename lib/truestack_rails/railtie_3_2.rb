@@ -125,7 +125,7 @@ module TruestackRails
               raise e
             end
 
-            TruestackRails.report_once!
+            TruestackRails::Host.report_once!
           end
         end
       end

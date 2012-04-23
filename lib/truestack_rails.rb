@@ -3,6 +3,7 @@ require 'truestack_rails/railtie_3_2'
 require 'truestack_rails/method_tracking'
 require 'truestack_rails/browser_tracking'
 require 'truestack_rails/configuration'
+require 'truestack_rails/host'
 require 'momentarily'
 
 # The main Truestack Rails plugin module
