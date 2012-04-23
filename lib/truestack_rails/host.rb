@@ -3,8 +3,8 @@ require 'sys/host'
 module TruestackRails
   module Host
     def self.report_once!
-      if (!!@@_sent_report)
-        @@_sent_report = Time.now
+      if (!!@_truestack_sent_report)
+        @_truestack_sent_report = Time.now
         report!
       end
     end
