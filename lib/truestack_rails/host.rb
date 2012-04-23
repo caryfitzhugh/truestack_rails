@@ -11,6 +11,12 @@ module TruestackRails
     def self.report!
       Momentarily.next_tick do
 binding.pry
+        repo = Grit::Repo.new(Rails.root)
+        current = repo.current
+        scm_version = current.id
+
+        TruestackClient.logger.info "SCM Version: " + scm_version
+
         TruestackClient.logger.info "VERSION: " + Sys::Host::VERSION
         TruestackClient.logger.info "Hostname: " + Sys::Host.hostname
         TruestackClient.logger.info "IP Addresses : " + Sys::Host.ip_addr.join(',')
