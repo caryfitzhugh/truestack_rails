@@ -12,13 +12,13 @@ module TruestackRails
       Momentarily.next_tick do
         include Sys
 
-        puts "VERSION: " + Host::VERSION
-        puts "Hostname: " + Host.hostname
-        puts "IP Addresses : " + Host.ip_addr.join(',')
-        puts "Host ID: " + Host.host_id.to_s
+        TruestackClient.logger.info "VERSION: " + Host::VERSION
+        TruestackClient.logger.info "Hostname: " + Host.hostname
+        TruestackClient.logger.info "IP Addresses : " + Host.ip_addr.join(',')
+        TruestackClient.logger.info "Host ID: " + Host.host_id.to_s
 
-        puts "Info: "
-        puts Host.info.to_yaml
+        TruestackClient.logger.info "Info: "
+        TruestackClient.logger.info Host.info.to_yaml
       end
     end
 
