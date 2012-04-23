@@ -1,4 +1,5 @@
 require 'sys/host'
+require 'grit'
 
 module TruestackRails
   module Host
