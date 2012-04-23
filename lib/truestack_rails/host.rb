@@ -11,10 +11,8 @@ module TruestackRails
     end
     def self.report!
       Momentarily.next_tick do
-binding.pry
         repo = Grit::Repo.new(Rails.root)
-        current = repo.current
-        scm_version = current.id
+        scm_version = repo.head.commit.id
 
         TruestackClient.logger.info "SCM Version: " + scm_version
 
