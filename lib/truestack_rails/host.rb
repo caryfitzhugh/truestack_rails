@@ -10,19 +10,15 @@ module TruestackRails
       end
     end
     def self.report!
-      Momentarily.next_tick do
-        repo = Grit::Repo.new(Rails.root)
-        scm_version = repo.head.commit.id
+      if (TruestackRails::Configuration.environments.include?(Rails.env))
+        Momentarily.next_tick do
+          repo = Grit::Repo.new(Rails.root)
+          methods = TruestackRails::Instrument.instrumented_methods
+          scm_version = repo.head.commit.id
+          host_id = "#{Sys::Host.host_id.to_s}/#{Sys::Host.ip_addr.join(',')}/#{Process.pid }/#{Rails.env}"
 
-        TruestackClient.logger.info "SCM Version: " + scm_version
-
-        TruestackClient.logger.info "VERSION: " + Sys::Host::VERSION
-        TruestackClient.logger.info "Hostname: " + Sys::Host.hostname
-        TruestackClient.logger.info "IP Addresses : " + Sys::Host.ip_addr.join(',')
-        TruestackClient.logger.info "Host ID: " + Sys::Host.host_id.to_s
-
-        TruestackClient.logger.info "Info: "
-        TruestackClient.logger.info Sys::Host.info.to_yaml
+          TrustackClient.startup(scm_version, host_id, methods)
+        end
       end
     end
 
