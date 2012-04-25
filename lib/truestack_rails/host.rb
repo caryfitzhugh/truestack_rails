@@ -17,7 +17,7 @@ module TruestackRails
           scm_version = repo.head.commit.id
           host_id = "#{Sys::Host.host_id.to_s}/#{Sys::Host.ip_addr.join(',')}/#{Process.pid }/#{Rails.env}"
 
-          TrustackClient.startup(scm_version, host_id, methods)
+          TruestackClient.startup(scm_version, host_id, methods)
         end
       end
     end
