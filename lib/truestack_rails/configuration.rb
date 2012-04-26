@@ -22,8 +22,8 @@ module TruestackRails
         if @logger
            @logger
         else
-          target = (self.config[:logger_path] || Rails.root.join('log','truestack.log')))
-          if (target =~ /stdout/i)
+          target = (self.config[:logger_path] || Rails.root.join('log','truestack.log'))
+          if target =~ /stdout/i
             target = STDOUT
           end
           @logger = Logger.new(target)
