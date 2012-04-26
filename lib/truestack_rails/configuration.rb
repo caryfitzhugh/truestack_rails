@@ -19,7 +19,15 @@ module TruestackRails
         !!self.config[:browser_tracking]
       end
       def logger
-        @logger ||= Logger.new((self.config[:logger_path] || Rails.root.join('log','truestack.log')))
+        if @logger
+           @logger
+        else
+          target = (self.config[:logger_path] || Rails.root.join('log','truestack.log')))
+          if (target =~ /stdout/i)
+            target = STDOUT
+          end
+          @logger = Logger.new(target)
+        end
       end
       def config
         @config ||= YAML.load_file("#{Rails.root}/config/truestack.yml").symbolize_keys

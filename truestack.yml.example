@@ -8,3 +8,4 @@ code_paths:
   - config
 environments:
   - production
+logger_path: log/truestack.log # OR STDOUT
