@@ -26,7 +26,6 @@ module TruestackRails
       version
     end
     def self.report!
-      TruestackClient.logger.info "Reporting! "
       if (TruestackRails::Configuration.environments.include?(Rails.env))
         Momentarily.next_tick do
           begin
