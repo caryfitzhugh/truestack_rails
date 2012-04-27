@@ -38,7 +38,7 @@ module TruestackRails
           begin
             definition_location = self.instance_method(method)
             if (definition_location)
-              loc = definition_location.source_location.first
+              loc = definition_location.source_location.join(":")
               filters = self._truestack_path_filters
               if (TruestackRails::Instrument.instrument_method?(loc, filters))
                 TruestackRails::Instrument.instrument_method!(self, method, loc, self._truestack_method_classification)
@@ -59,7 +59,7 @@ module TruestackRails
           begin
             definition_location = self.method(method)
             if (definition_location)
-              loc = definition_location.source_location.first
+              loc = definition_location.source_location.join(":")
               filters = self._truestack_path_filters
               if (TruestackRails::Instrument.instrument_method?(loc, filters))
                 TruestackRails::Instrument.instrument_method!(self, method, loc, self._truestack_method_classification, false)
