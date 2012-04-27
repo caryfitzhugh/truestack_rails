@@ -129,7 +129,7 @@ CODE
         klass.instance_eval code
       end
 
-      self.instrumented_methods << [klass.to_s, method]
+      self.instrumented_methods << [klass.to_s, method, location.to_s]
       ::TruestackClient.logger.info "Wrapped method #{klass}##{method}"
     end
 

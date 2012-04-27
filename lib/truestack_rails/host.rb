@@ -1,5 +1,6 @@
 require 'sys/host'
 require 'grit'
+require 'digest/md5'
 
 module TruestackRails
   module Host
@@ -14,7 +15,13 @@ module TruestackRails
       version = ENV['COMMIT_HASH']
       # Otherwise try this
       if version.blank?
-        version = Grit::Repo.new(Rails.root).head.commit.id
+        begin
+          version = Grit::Repo.new(Rails.root).head.commit.id
+        rescue Exception => e
+          # Ack. Fallback..
+          methods = TruestackRails::Instrument.instrumented_methods
+          version = "MD5:#{Digest::MD5.hexdigest(methods.to_json)}"
+        end
       end
       version
     end
