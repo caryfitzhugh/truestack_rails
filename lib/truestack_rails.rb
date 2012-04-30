@@ -4,7 +4,6 @@ require 'truestack_rails/method_tracking'
 require 'truestack_rails/browser_tracking'
 require 'truestack_rails/configuration'
 require 'truestack_rails/host'
-require 'truestack_rails/complexity'
 require 'momentarily'
 
 # The main Truestack Rails plugin module
