@@ -3,6 +3,7 @@ module TruestackRails
   module Complexity
     def self.method_complexity(method)
       begin
+        binding.pry
        MetricABC.new(method).complexity
       rescue  Exception => e
         {}

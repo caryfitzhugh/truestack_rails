@@ -38,11 +38,10 @@ module TruestackRails
           begin
             definition_location = self.instance_method(method)
             if (definition_location)
-              #MyMath.method(:sum).to_raw_source
-              complexity = TruestackRails::Complexity.method_complexity(definition_location)
               loc = definition_location.source_location.join(":")
               filters = self._truestack_path_filters
               if (TruestackRails::Instrument.instrument_method?(loc, filters))
+                complexity = TruestackRails::Complexity.method_complexity(definition_location)
                 TruestackRails::Instrument.instrument_method!(self, method, loc, self._truestack_method_classification, complexity)
               end
             end
@@ -61,11 +60,11 @@ module TruestackRails
           begin
             definition_location = self.method(method)
             if (definition_location)
-              complexity = TruestackRails::Complexity.method_complexity(definition_location)
 
               loc = definition_location.source_location.join(":")
               filters = self._truestack_path_filters
               if (TruestackRails::Instrument.instrument_method?(loc, filters))
+                complexity = TruestackRails::Complexity.method_complexity(definition_location)
                 TruestackRails::Instrument.instrument_method!(self, method, loc, self._truestack_method_classification, complexity, false)
               end
             end
