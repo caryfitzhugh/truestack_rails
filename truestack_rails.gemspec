@@ -23,5 +23,4 @@ Gem::Specification.new do |s|
   s.add_dependency 'grit'
   s.add_dependency 'sys-proctable', "~> 0.9.0"
   s.add_dependency 'sys-host',      "~> 0.6.2"
-  s.add_dependency "sourcify"
 end

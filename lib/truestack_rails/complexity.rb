@@ -1,14 +1,20 @@
 require 'ripper'
 module TruestackRails
   module Complexity
-    def self.method_complexity(method)
-      MetricABC.new(method).complexity
+    def self.method_complexity(location)
+      filename, line = location.split(":", 2)
+
+      @complexity ||= {}
+      @complexity.merge(MetricABC.new(filename).complexity)
+
     end
     class MetricABC
       attr_accessor :ast, :complexity
 
-      def initialize(method)
-        @ast = Ripper::SexpBuilder.new(method.to_raw_source).parse
+      def initialize(file_name)
+        File.open(file_name, "r") do |f|
+          @ast = Ripper::SexpBuilder.new(f.read).parse
+        end
         return if @ast.empty?
         @complexity = {}
         @nesting = []
@@ -22,13 +28,7 @@ module TruestackRails
           @nesting << node[1][1]
           binding.pry
           @complexity[@nesting.slice(-2, 2).join("#")] = calculate_abc(node)
-        elsif node[0] == :class
-          if node[1][1][1].is_a? Symbol
-            @nesting << node[1][1][1]
-          else
-            @nesting << node[1][-1][1]
-          end
-        elsif node[0] == :module
+        elsif node[0] == :class || node[0] == :module
           if node[1][1][1].is_a? Symbol
             @nesting << node[1][1][1]
           else
