@@ -8,8 +8,7 @@ module TruestackRails
       attr_accessor :ast, :complexity
 
       def initialize(method)
-        binding.pry
-        @ast = Ripper::SexpBuilder.new(method.to_source).parse
+        @ast = Ripper::SexpBuilder.new(method.to_raw_source).parse
         return if @ast.empty?
         @complexity = {}
         @nesting = []
