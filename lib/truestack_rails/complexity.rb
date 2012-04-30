@@ -27,7 +27,7 @@ module TruestackRails
         if node[0] == :def
           @nesting << node[1][1]
           binding.pry
-          @complexity[@nesting] = calculate_abc(node)
+          @complexity[@nesting.slice(-2, 2).join("#")] = calculate_abc(node)
         elsif node[0] == :class || node[0] == :module
           if node[1][1][1].is_a? Symbol
             @nesting << node[1][1][1]
