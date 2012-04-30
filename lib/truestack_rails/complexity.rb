@@ -2,7 +2,11 @@ require 'ripper'
 module TruestackRails
   module Complexity
     def self.method_complexity(method)
-      MetricABC.new(method).complexity
+      begin
+       MetricABC.new(method).complexity
+      rescue  Exception => e
+        {}
+      end
     end
     class MetricABC
       attr_accessor :ast, :complexity
