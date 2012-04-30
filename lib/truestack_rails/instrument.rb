@@ -38,10 +38,11 @@ module TruestackRails
           begin
             definition_location = self.instance_method(method)
             if (definition_location)
+              complexity = TruestackRails::Complexity.method_complexity(definition_location)
               loc = definition_location.source_location.join(":")
               filters = self._truestack_path_filters
               if (TruestackRails::Instrument.instrument_method?(loc, filters))
-                TruestackRails::Instrument.instrument_method!(self, method, loc, self._truestack_method_classification)
+                TruestackRails::Instrument.instrument_method!(self, method, loc, self._truestack_method_classification, complexity)
               end
             end
           rescue Exception => e
@@ -59,10 +60,11 @@ module TruestackRails
           begin
             definition_location = self.method(method)
             if (definition_location)
+              complexity = TruestackRails::Complexity.method_complexity(definition_location)
               loc = definition_location.source_location.join(":")
               filters = self._truestack_path_filters
               if (TruestackRails::Instrument.instrument_method?(loc, filters))
-                TruestackRails::Instrument.instrument_method!(self, method, loc, self._truestack_method_classification, false)
+                TruestackRails::Instrument.instrument_method!(self, method, loc, self._truestack_method_classification, complexity, false)
               end
             end
           rescue Exception => e
@@ -105,7 +107,7 @@ module TruestackRails
     # Wrap a method on klass, which has a location, and classification type.
     # do_class_eval specifies whether you are to do it on the class of class
     # or instance of klass.
-    def self.instrument_method!(klass, method, location, classification, do_class_eval = true)
+    def self.instrument_method!(klass, method, location, classification, complexity, do_class_eval = true)
       code =
 <<CODE
       alias :#{WRAPPED_METHOD_PREFIX}_#{method} :#{method}
@@ -129,7 +131,7 @@ CODE
         klass.instance_eval code
       end
 
-      self.instrumented_methods << [klass.to_s, method, location.to_s]
+      self.instrumented_methods << [klass.to_s, method, location.to_s, complexity]
       ::TruestackClient.logger.info "Wrapped method #{klass}##{method}"
     end
 
