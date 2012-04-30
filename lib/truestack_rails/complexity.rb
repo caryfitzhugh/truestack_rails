@@ -3,9 +3,10 @@ module TruestackRails
   module Complexity
     def self.method_complexity(location)
       filename, line = location.split(":", 2)
+
       @complexity ||= {}
-      @complexity.merge(MetricABC.new(filename))
-      binding.pry
+      @complexity.merge(MetricABC.new(filename).complexity)
+
     end
     class MetricABC
       attr_accessor :ast, :complexity
@@ -16,7 +17,7 @@ module TruestackRails
         end
         return if @ast.empty?
         @complexity = {}
-        @nesting = [file_name]
+        @nesting = []
         process_ast(@ast)
       end
 
@@ -25,6 +26,7 @@ module TruestackRails
 
         if node[0] == :def
           @nesting << node[1][1]
+          binding.pry
           @complexity[@nesting.join(" > ")] = calculate_abc(node)
         elsif node[0] == :class || node[0] == :module
           if node[1][1][1].is_a? Symbol
