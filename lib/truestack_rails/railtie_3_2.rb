@@ -34,12 +34,12 @@ module TruestackRails
       ActiveSupport::Notifications.subscribe("truestack.request") do |name, tstart, tend, id, args|
         results = TruestackRails::MethodTracking.track_methods_results
 
-        TruestackClient.logger.info( "#{args[:controller_name]}##{args[:action_name]} #{args[:request_id]}:#{tstart.to_i}, #{tend.to_i}, #{results.to_yaml}")
+        TruestackClient.logger.info( "#{args[:controller_name]}##{args[:action_name]} #{tstart.to_i}, #{tend.to_i}, #{results.to_yaml}")
 
         if (TruestackRails::Configuration.environments.include?(Rails.env))
           Momentarily.next_tick do
             begin
-              TruestackClient.request("#{args[:controller_name]}##{args[:action_name]}", args[:request_id], results)
+              TruestackClient.request("#{args[:controller_name]}##{args[:action_name]}", results)
             rescue Exception => e
               TruestackClient.logger.error "Exception on request: #{e}"
             end
@@ -112,16 +112,16 @@ module TruestackRails
         private
         # Match the WRAPPED_METHOD_PREFIX
         def _truestack_request_logging_around_filter
-          @truestack_request_id = SecureRandom.hex(8)
-          ActiveSupport::Notifications.instrument("truestack.request", :controller_name => controller_name, :action_name => action_name, :request_id=>@truestack_request_id) do
+          @truestack_request_id = "#{controller_name}##{action_name}"
+          ActiveSupport::Notifications.instrument("truestack.request", :controller_name => controller_name, :action_name => action_name) do
             TruestackRails::MethodTracking.reset_methods
             begin
               yield
             rescue Exception => e
-              ActiveSupport::Notifications.instrument("truestack.exception", :exception => e, :request => request,  :controller_name => controller_name, :request_id=>@truestack_request_id, :action_name => action_name)
+              ActiveSupport::Notifications.instrument("truestack.exception", :exception => e, :request => request,  :controller_name => controller_name, :action_name => action_name)
               raise e
             rescue RuntimeError => e
-              ActiveSupport::Notifications.instrument("truestack.exception", :exception => e, :request => request,  :controller_name => controller_name, :request_id=>@truestack_request_id, :action_name => action_name)
+              ActiveSupport::Notifications.instrument("truestack.exception", :exception => e, :request => request,  :controller_name => controller_name, :action_name => action_name)
               raise e
             end
             TruestackRails::Host.report_once!
