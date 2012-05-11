@@ -9,13 +9,12 @@ module TruestackRails
     def self.track_called_method(name, type, tstart, tend)
       @_ts_methods ||= Hash.new {|h,k| h[k] = [] }
 
-      # {    type => controller | model | helper | view | browser | lib
+      # {
       #      tstart
       #      tend
-      #      duration
       #      name: klass#method
       # }
-      @_ts_methods[name] << {tstart: tstart, tend: tend, type: type}
+      @_ts_methods[name] << {tstart: tstart, tend: tend}
     end
 
     def self.track_methods_results

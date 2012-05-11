@@ -129,8 +129,8 @@ CODE
         klass.instance_eval code
       end
 
-      self.instrumented_methods << [klass.to_s, method, location.to_s]
-      ::TruestackClient.logger.info "Wrapped method #{klass}##{method}"
+      self.instrumented_methods << [klass.to_s, method, location.to_s, classification.to_s]
+      ::TruestackClient.logger.info "Wrapped method #{klass}##{method} [#{classification.to_s}]"
     end
 
     # Gives you all the instrumented methods
