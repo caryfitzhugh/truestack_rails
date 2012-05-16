@@ -5,7 +5,6 @@ module TruestackRails
         img_url = URI.parse(TruestackRails::Configuration.host)
         img_url.path = "/app/browser_event"
         img_url.query = {
-          :tstart     => TruestackClient.to_timestamp(Time.now),
           :action     => @truestack_request_id,
           :name       => "#{controller_name}##{action_name}",
           "TrueStack-Access-Key" =>  TruestackRails::Configuration.key
@@ -32,8 +31,8 @@ module TruestackRails
     var newimg = document.createElement('img');
     newimg.setAttribute("style", "height:1px; width:1px");
     newimg.setAttribute("src","#{img_url}"+
-      "&tstart="+ _truestack_browser_data.tstart.getTime() / 1000.0+
-      "&tend="  +_truestack_browser_data.tend.getTime() / 1000.0);
+      "&tstart="+ _truestack_browser_data.tstart.getTime() +
+      "&tend="  +_truestack_browser_data.tend.getTime());
 
     document.body.appendChild(newimg);
   }
