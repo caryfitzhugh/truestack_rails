@@ -25,7 +25,7 @@ module TruestackRails
               TruestackClient.exception("#{args[:controller_name]}##{args[:action_name]}",
                           tstart,
                           "#{args[:klass]}##{args[:method]}",
-                          TruestackRails::MethodTracking.track_methods_results
+                          TruestackRails::MethodTracking.track_methods_results,
                           args[:exception],
                           args[:request].filtered_env  )
             rescue Exception => e
