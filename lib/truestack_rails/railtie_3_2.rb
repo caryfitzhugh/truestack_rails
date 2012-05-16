@@ -24,7 +24,7 @@ module TruestackRails
               # def self.exception(action_name, start_time, failed_in_method, actions, e, request_env)
               TruestackClient.exception("#{args[:controller_name]}##{args[:action_name]}",
                           tstart,
-                          "#{args[:klass]}##{args[:method]}",
+                          "#{args[:klass].class.to_s}##{args[:method]}",
                           TruestackRails::MethodTracking.track_methods_results,
                           args[:exception],
                           args[:request].filtered_env  )
