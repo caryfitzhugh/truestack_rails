@@ -12,6 +12,7 @@ module TruestackRails
         end
       end
     end
+
     module MethodInstrumentation
       [:_truestack_method_classification, :_truestack_path_filters].each do |meth|
         define_method(meth) do
@@ -111,14 +112,36 @@ module TruestackRails
       alias :#{WRAPPED_METHOD_PREFIX}_#{method} :#{method}
       def #{method}(*args, &block)
         retval = nil
-        ActiveSupport::Notifications.instrument("truestack.method_call", :klass=>self, :method=>:#{method}, :classification => '#{classification}', :location=>'#{location}') do
+        exception = nil
 
-          if block_given?
-            retval = #{WRAPPED_METHOD_PREFIX}_#{method}(*args, &block)
-          else
-            retval = #{WRAPPED_METHOD_PREFIX}_#{method}(*args)
+        ActiveSupport::Notifications.instrument("truestack.method_call", :klass=>self, :method=>:#{method}, :classification => '#{classification}', :location=>'#{location}') do
+          begin
+            if block_given?
+              retval = #{WRAPPED_METHOD_PREFIX}_#{method}(*args, &block)
+            else
+              retval = #{WRAPPED_METHOD_PREFIX}_#{method}(*args)
+            end
+          rescue Exception => e
+            exception = e
+          rescue RuntimeError => e
+            exception = e
           end
         end
+
+        # If we caught an exception here, grab our data, and then reraise it
+        if exception
+          # We had an exception in the call tree, which we caught
+          ActiveSupport::Notifications.instrument("truestack.exception",
+            :exception => exception,
+            :request => request,
+            :controller_name => controller_name,
+            :action_name => action_name,
+            :klass=>self,
+            :method=>:#{method}
+            )
+          raise exception
+        end
+
         retval
       end
 CODE

@@ -5,6 +5,7 @@ module TruestackRails
         img_url = URI.parse(TruestackRails::Configuration.host)
         img_url.path = "/app/browser_event"
         img_url.query = {
+          :tstart     => ((Time.now.to_f) * 1000).to_i
           :action     => @truestack_request_id,
           :name       => "#{controller_name}##{action_name}",
           "TrueStack-Access-Key" =>  TruestackRails::Configuration.key
