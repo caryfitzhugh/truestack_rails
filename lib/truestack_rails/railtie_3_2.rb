@@ -42,7 +42,7 @@ module TruestackRails
       ActiveSupport::Notifications.subscribe("truestack.request") do |name, tstart, tend, id, args|
         results = TruestackRails::MethodTracking.track_methods_results
         req_name= TruestackRails.request_name(args[:controller_name],args[:action_name])
-        TruestackClient.logger.info( "#{req_name} #{tstart.to_i}, #{tend.to_i}, #{results.to_yaml}")
+        TruestackClient.logger.info( "TruestackRequest - #{req_name} #{tstart.to_i}, #{tend.to_i}, #{results.to_yaml}")
 
         if (TruestackRails::Configuration.environments.include?(Rails.env))
           Momentarily.next_tick do
