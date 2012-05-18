@@ -24,7 +24,8 @@ module TruestackRails
           Momentarily.next_tick do
             begin
               # def self.exception(action_name, start_time, failed_in_method, actions, e, request_env)
-              TruestackClient.exception(TruestackRails.request_name(args[:controller_name], args[:action_name]),
+              TruestackClient.exception(
+                          TruestackRails.request_name(args[:controller_name], args[:action_name]),
                           Time.now,
                           TruestackRails.method_name(args[:klass],args[:method]),
                           TruestackRails::MethodTracking.track_methods_results,
