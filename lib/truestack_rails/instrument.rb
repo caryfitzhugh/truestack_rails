@@ -114,32 +114,26 @@ module TruestackRails
         retval = nil
         exception = nil
 
-        ActiveSupport::Notifications.instrument("truestack.method_call", :klass=>self, :method=>:#{method}, :classification => '#{classification}', :location=>'#{location}') do
+        ActiveSupport::Notifications.instrument("truestack.method_call", :klass=>self,
+                    :method=>:#{method}, :classification => '#{classification}', :location=>'#{location}') do
           begin
             if block_given?
               retval = #{WRAPPED_METHOD_PREFIX}_#{method}(*args, &block)
             else
               retval = #{WRAPPED_METHOD_PREFIX}_#{method}(*args)
             end
-          rescue Exception => e
-            exception = e
-          rescue RuntimeError => e
-            exception = e
+          # Throw here b/c the request will add exception
+          rescue Exception, RuntimeError => e
+            @_ts_exception_data = {
+              :exception => e.clone,
+              :request => request,
+              :controller_name => controller_name,
+              :action_name => action_name,
+              :klass=>self,
+              :method=>:#{method}
+            }
+            raise e
           end
-        end
-
-        # If we caught an exception here, grab our data, and then reraise it
-        if exception
-          # We had an exception in the call tree, which we caught
-          ActiveSupport::Notifications.instrument("truestack.exception",
-            :exception => exception,
-            :request => request,
-            :controller_name => controller_name,
-            :action_name => action_name,
-            :klass=>self,
-            :method=>:#{method}
-            )
-          raise exception
         end
 
         retval

@@ -14,16 +14,15 @@ module TruestackRails
       end
 
       # From that request handilng, catch exceptions
-      ActiveSupport::Notifications.subscribe("truestack.exception") do |name, tstart, tend, id, args|
-
-        TruestackClient.logger.info( "#{args[:controller_name]}##{args[:action_name]}@#{args[:failed_in_method]} Exception: #{args[:exception].to_s}")
+      ActiveSupport::Notifications.subscribe("truestack.exception") do |name, args| #tstart, tend, id, args|
+        TruestackClient.logger.info( "#{args[:controller_name]}##{args[:action_name]}@#{args[:klass].class.to_s}##{args[:method]} Exception: #{args[:exception].to_s}")
 
         if (TruestackRails::Configuration.environments.include?(Rails.env))
           Momentarily.next_tick do
             begin
               # def self.exception(action_name, start_time, failed_in_method, actions, e, request_env)
               TruestackClient.exception("#{args[:controller_name]}##{args[:action_name]}",
-                          tstart,
+                          Time.now,
                           "#{args[:klass].class.to_s}##{args[:method]}",
                           TruestackRails::MethodTracking.track_methods_results,
                           args[:exception],
@@ -48,20 +47,6 @@ module TruestackRails
               TruestackClient.request("#{args[:controller_name]}##{args[:action_name]}", results)
             rescue Exception => e
               TruestackClient.logger.error "Exception on request: #{e}"
-            end
-          end
-        end
-      end
-
-      ActiveSupport::Notifications.subscribe("truestack.metric") do |name, args|
-        TruestackClient.logger.info "Tracking metric: #{args[:name]} : #{args[:value]} : #{args[:meta_data].to_json}"
-
-        if (TruestackRails::Configuration.environments.include?(Rails.env))
-          Momentarily.next_tick do
-            begin
-              TruestackClient.metric(args[:tstart], args[:name], args[:value], args[:meta_data])
-            rescue Exception => e
-              TruestackClient.logger.error "Exception on metric: #{e}"
             end
           end
         end
@@ -132,6 +117,12 @@ module TruestackRails
             ensure
               TruestackRails::Host.report_once!
             end
+          end
+
+          if (@_ts_exception_data)
+            ActiveSupport::Notifications.publish("truestack.exception", @_ts_exception_data)
+
+            raise @_ts_exception_data[:exception]
           end
 
           if (exception)
