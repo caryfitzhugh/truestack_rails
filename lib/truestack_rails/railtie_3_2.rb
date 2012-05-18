@@ -4,7 +4,7 @@ module TruestackRails
     def self.subscribe!
       # Track method calls
       ActiveSupport::Notifications.subscribe("truestack.method_call") do |name, tstart, tend, id, data|
-        TruestackRails::MethodTracking.track_called_method("#{data[:klass].class.to_s}##{data[:method]}", data[:classification], tstart, tend)
+        TruestackRails::MethodTracking.track_called_method(TruestackRails.method_name(data[:klass],data[:method]), data[:classification], tstart, tend)
       end
 
       # Gets view rendering times
@@ -15,15 +15,16 @@ module TruestackRails
 
       # From that request handilng, catch exceptions
       ActiveSupport::Notifications.subscribe("truestack.exception") do |name, args| #tstart, tend, id, args|
-        TruestackClient.logger.info( "#{args[:controller_name]}##{args[:action_name]}@#{args[:klass].class.to_s}##{args[:method]} Exception: #{args[:exception].to_s}")
+        exception_name = TruestackRails.exception_name(args[:klass], args[:method], args[:exception])
+        TruestackClient.logger.info("Truestack Exception: #{exception_name}" )
 
         if (TruestackRails::Configuration.environments.include?(Rails.env))
           Momentarily.next_tick do
             begin
               # def self.exception(action_name, start_time, failed_in_method, actions, e, request_env)
-              TruestackClient.exception("#{args[:controller_name]}##{args[:action_name]}",
+              TruestackClient.exception(TruestackRails.request_name(args[:controller_name], args[:action_name]),
                           Time.now,
-                          "#{args[:klass].class.to_s}##{args[:method]}",
+                          TruestackRails.method_name(args[:klass],args[:method]),
                           TruestackRails::MethodTracking.track_methods_results,
                           args[:exception],
                           args[:request].filtered_env  )
@@ -38,8 +39,8 @@ module TruestackRails
       # Push into momentarily - so we can defer to the next_tick - so we don't block on the request.
       ActiveSupport::Notifications.subscribe("truestack.request") do |name, tstart, tend, id, args|
         results = TruestackRails::MethodTracking.track_methods_results
-
-        TruestackClient.logger.info( "#{args[:controller_name]}##{args[:action_name]} #{tstart.to_i}, #{tend.to_i}, #{results.to_yaml}")
+        req_name= TruestackRails.request_name(args[:controller_name],args[:action_name])
+        TruestackClient.logger.info( "#{req_name} #{tstart.to_i}, #{tend.to_i}, #{results.to_yaml}")
 
         if (TruestackRails::Configuration.environments.include?(Rails.env))
           Momentarily.next_tick do
@@ -110,24 +111,23 @@ module TruestackRails
             TruestackRails::MethodTracking.reset_methods
             begin
               yield
-            rescue Exception => e
-              exception = e
-            rescue RuntimeError => e
+            rescue Exception, RuntimeError => e
               exception = e
             ensure
               TruestackRails::Host.report_once!
             end
           end
+          if exception
+            if @_ts_exception_data
+              publish_data = @_ts_exception_data.merge({
+                :controller_name => controller_name,
+                :action_name => action_name
+              })
+              ActiveSupport::Notifications.publish("truestack.exception", publish_data)
+            end
 
-          if (@_ts_exception_data)
-            ActiveSupport::Notifications.publish("truestack.exception", @_ts_exception_data)
-
-            raise @_ts_exception_data[:exception]
-          end
-
-          if (exception)
             raise exception
-          end
+         end
         end
       end
     end

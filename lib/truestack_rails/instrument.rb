@@ -122,13 +122,14 @@ module TruestackRails
             else
               retval = #{WRAPPED_METHOD_PREFIX}_#{method}(*args)
             end
-          # Throw here b/c the request will add exception
+
+            # If we got through w/o an exception, we don't have to report one
+            @_ts_exception_data = nil
+
           rescue Exception, RuntimeError => e
-            @_ts_exception_data = {
+            # Only gets set the 'first' time we have an unhandled exception
+            @_ts_exception_data ||= {
               :exception => e.clone,
-              :request => request,
-              :controller_name => controller_name,
-              :action_name => action_name,
               :klass=>self,
               :method=>:#{method}
             }

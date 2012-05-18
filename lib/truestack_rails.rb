@@ -35,4 +35,13 @@ module TruestackRails
       end
     end
   end
+  def self.exception_name(klass, name, backtrace)
+    "#{self.method_name(klass,name)}@#{backtrace.first}"
+  end
+  def self.method_name(klass, name)
+    "#{klass.class.to_s}##{name}"
+  end
+  def self.request_name(controller, action)
+    "#{controller}##{action}"
+  end
 end
