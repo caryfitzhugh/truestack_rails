@@ -123,7 +123,8 @@ module TruestackRails
             if @_ts_exception_data
               publish_data = @_ts_exception_data.merge({
                 :controller_name => controller_name,
-                :action_name => action_name
+                :action_name => action_name,
+                :request     => request
               })
               ActiveSupport::Notifications.publish("truestack.exception", publish_data)
             end
