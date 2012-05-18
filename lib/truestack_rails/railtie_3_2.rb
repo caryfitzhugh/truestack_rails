@@ -9,8 +9,10 @@ module TruestackRails
 
       # Gets view rendering times
       ActiveSupport::Notifications.subscribe("render_template.action_view") do |name, tstart, tend, id, data|
-        name = TruestackRails::Instrument.classify_path(data[:identifier])
-        TruestackRails::MethodTracking.track_called_method(name, 'view', tstart, tend)
+        if TruestackRails::Instrument.instrument_method?(data[:identifier], TruestackRails::Configuration.code_paths)
+          name = TruestackRails::Instrument.classify_path(data[:identifier])
+          TruestackRails::MethodTracking.track_called_method(name, 'view', tstart, tend)
+        end
       end
 
       # From that request handilng, catch exceptions
