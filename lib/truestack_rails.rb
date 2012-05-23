@@ -18,7 +18,7 @@ module TruestackRails
     config.before_initialize do
       ## Start up the momentarily thread
       Momentarily.start
-      TruestackClient::Configure.set_resource_file_location(Rails.root.join("config","truestack_uri"))
+      TruestackClient.set_resource_file_location(Rails.root.join("config","truestack_uri"))
 
       config = TruestackRails::Configuration
 
