@@ -7,7 +7,7 @@ module TruestackRails
         img_url.query = {
           :action     => @truestack_request_id,
           :name       => "#{controller_name}##{action_name}",
-          "Truestack-Access-Key" =>  TruestackClient.key
+          "Truestack-Access-Key" =>  TruestackClient.config.key
         }.to_query
 
         return <<JS
