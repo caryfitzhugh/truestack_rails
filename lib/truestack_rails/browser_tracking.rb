@@ -2,12 +2,12 @@ module TruestackRails
   module BrowserTracking
     def  truestack_browser_tracker
       if TruestackRails::Configuration.enable_browser_tracking?
-        img_url = URI.parse(TruestackRails::Configuration.host)
+        img_url = URI.parse(TruestackClient.config.host)
         img_url.path = "/app/browser_event"
         img_url.query = {
           :action     => @truestack_request_id,
           :name       => "#{controller_name}##{action_name}",
-          "Truestack-Access-Key" =>  TruestackRails::Configuration.key
+          "Truestack-Access-Key" =>  TruestackClient.key
         }.to_query
 
         return <<JS
