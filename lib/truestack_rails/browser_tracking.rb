@@ -34,6 +34,9 @@ module TruestackRails
     newimg.setAttribute("src","#{img_url}"+
       "&tstart="+ _truestack_browser_data.tstart.getTime() +
       "&tend="  +_truestack_browser_data.tend.getTime());
+    newimg.setAttribute("width", "1");
+    newimg.setAttribute("height", "1");
+    newimg.setAttribute("alt", "");
 
     document.body.appendChild(newimg);
   }
