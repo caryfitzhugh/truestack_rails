@@ -4,10 +4,11 @@ module TruestackRails
       if TruestackRails::Configuration.enable_browser_tracking?
         img_url = URI::HTTP.build(
           :host => TruestackClient.config.host,
-          :path => "/app/browser_event",
+          :path => "/app/browser",
           :query => {
-            :action     => @truestack_request_id,
-            :name       => "#{controller_name}##{action_name}",
+            :truestack => {
+              :action     => @truestack_request_id,
+              :name       => "#{controller_name}##{action_name}"},
             "Truestack-Access-Key" =>  TruestackClient.config.key
           }.to_query)
 
@@ -32,8 +33,8 @@ module TruestackRails
     var newimg = document.createElement('img');
     newimg.setAttribute("style", "height:1px; width:1px");
     newimg.setAttribute("src","#{img_url}"+
-      "&tstart="+ _truestack_browser_data.tstart.getTime() +
-      "&tend="  +_truestack_browser_data.tend.getTime());
+      "&truestack[tstart]="+ _truestack_browser_data.tstart.getTime() +
+      "&truestack[tend]="  +_truestack_browser_data.tend.getTime());
     newimg.setAttribute("width", "1");
     newimg.setAttribute("height", "1");
     newimg.setAttribute("alt", "");
