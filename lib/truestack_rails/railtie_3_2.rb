@@ -17,8 +17,7 @@ module TruestackRails
 
       # From that request handilng, catch exceptions
       ActiveSupport::Notifications.subscribe("truestack.exception") do |name, args| #tstart, tend, id, args|
-        exception_name = TruestackRails.exception_name(args[:klass], args[:method], args[:exception])
-        TruestackClient.logger.info("Truestack Exception: #{exception_name}" )
+        TruestackClient.logger.info("Truestack Exception: #{args[:exception]}" )
 
         if (TruestackRails::Configuration.environments.include?(Rails.env))
           Momentarily.next_tick do
@@ -27,10 +26,9 @@ module TruestackRails
               TruestackClient.exception(
                           TruestackRails.request_name(args[:controller_name], args[:action_name]),
                           Time.now,
-                          TruestackRails.method_name(args[:klass],args[:method]),
+                          TruestackRails.method_name(args[:klass], args[:method]),
                           TruestackRails::MethodTracking.track_methods_results,
-                          args[:exception],
-                          args[:request].filtered_env  )
+                          args[:exception])
             rescue Exception => e
               TruestackClient.logger.error "Exception on request: #{e}"
             end
