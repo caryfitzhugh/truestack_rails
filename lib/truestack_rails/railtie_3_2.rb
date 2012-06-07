@@ -28,7 +28,8 @@ module TruestackRails
                           Time.now,
                           TruestackRails.method_name(args[:klass], args[:method]),
                           TruestackRails::MethodTracking.track_methods_results,
-                          args[:exception])
+                          args[:exception],
+                          :ignore_path_prefix => Rails.root)
             rescue Exception => e
               TruestackClient.logger.error "Exception on request: #{e}"
             end
