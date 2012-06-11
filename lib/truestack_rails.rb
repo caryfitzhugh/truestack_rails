@@ -38,7 +38,4 @@ module TruestackRails
   def self.method_name(klass, name)
     "#{klass.class.to_s}##{name}"
   end
-  def self.request_name(controller, action)
-    "#{controller}##{action}"
-  end
 end

@@ -106,6 +106,8 @@ module TruestackRails
         private
         # Match the WRAPPED_METHOD_PREFIX
         def _truestack_request_logging_around_filter
+# We want to see if 'self' is the right class name
+          binding.pry
           @truestack_request_id = "#{controller_name}##{action_name}"
           exception = nil
 
