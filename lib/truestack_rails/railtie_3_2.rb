@@ -107,7 +107,7 @@ module TruestackRails
         private
         # Match the WRAPPED_METHOD_PREFIX
         def _truestack_request_logging_around_filter
-          @truestack_request_id = request_name = TruestackClient.method_name(self, action_name)
+          @truestack_request_id = request_name = TruestackRails.method_name(self, action_name)
           exception = nil
 
           ActiveSupport::Notifications.instrument("truestack.request", :request_name => request_name) do
