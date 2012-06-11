@@ -41,13 +41,14 @@ module TruestackRails
       # Push into momentarily - so we can defer to the next_tick - so we don't block on the request.
       ActiveSupport::Notifications.subscribe("truestack.request") do |name, tstart, tend, id, args|
         results = TruestackRails::MethodTracking.track_methods_results
-        req_name= TruestackRails.request_name(args[:controller_name],args[:action_name])
+        req_name= TruestackRails.method_name(args[:controller_name], args[:action_name])
+
         TruestackClient.logger.info( "TruestackRequest - #{req_name} #{tstart.to_i}, #{tend.to_i}, #{results.to_yaml}")
 
         if (TruestackRails::Configuration.environments.include?(Rails.env))
           Momentarily.next_tick do
             begin
-              TruestackClient.request("#{args[:controller_name]}##{args[:action_name]}", results)
+              TruestackClient.request(req_name, results)
             rescue Exception => e
               TruestackClient.logger.error "Exception on request: #{e}"
             end
@@ -87,6 +88,7 @@ module TruestackRails
           end
         end
       end
+
       # Make everything that isn't specified a model level
       TruestackRails::Instrument.instrument_methods(Object,                  'model')
 
@@ -106,12 +108,10 @@ module TruestackRails
         private
         # Match the WRAPPED_METHOD_PREFIX
         def _truestack_request_logging_around_filter
-# We want to see if 'self' is the right class name
-          binding.pry
-          @truestack_request_id = "#{controller_name}##{action_name}"
+          @truestack_request_id = TruestackClient.method_name(self, action_name)
           exception = nil
 
-          ActiveSupport::Notifications.instrument("truestack.request", :controller_name => controller_name, :action_name => action_name) do
+          ActiveSupport::Notifications.instrument("truestack.request", :controller_name => self.class.to_s, :action_name => action_name) do
             TruestackRails::MethodTracking.reset_methods
             begin
               yield
