@@ -24,6 +24,7 @@ module TruestackRails
 
       TruestackClient.configure do |c|
         c.logger = config.logger
+        c.app_version = "Rails#{Rails::VERSION::STRING}:TsRails-#{TruestackRails::VERSION}"
       end
 
       case (::Rails.version.to_f * 10.0).to_i / 10.0
