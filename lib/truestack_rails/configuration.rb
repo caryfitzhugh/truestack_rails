@@ -32,7 +32,7 @@ module TruestackRails
       def config
         if @config
           @config
-        elsif File.existis?("#{Rails.root}/config/truestack.yml")
+        elsif File.exists?("#{Rails.root}/config/truestack.yml")
           @config = YAML.load_file("#{Rails.root}/config/truestack.yml").symbolize_keys
         else
           puts "WARNING - truestack.yml could not be found."
