@@ -7,7 +7,6 @@ module TruestackRails
           :path => "/app/browser",
           :query => {
             :truestack => {
-              :action     => @truestack_request_id,
               :name       => "#{controller_name}##{action_name}"},
             "Truestack-Access-Key" =>  TruestackClient.config.key
           }.to_query)
