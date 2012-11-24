@@ -1,3 +1,3 @@
 module TruestackRails
-  VERSION = "0.0.195"
+  VERSION = "0.0.196"
 end

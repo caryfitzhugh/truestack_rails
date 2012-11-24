@@ -37,6 +37,7 @@ module TruestackRails
         else
           puts "WARNING - truestack.yml could not be found."
           @config = {}
+        end
       end
     end
   end
