@@ -27,13 +27,15 @@ module TruestackRails
         c.app_version = "Rails#{Rails::VERSION::STRING}:TSRails-#{TruestackRails::VERSION}"
       end
 
-      case (::Rails.version.to_f * 10.0).to_i / 10.0
-      when 3.2
-        TruestackRails::Host.report_once!
-        TruestackRails::Railtie32.instrument!
-        TruestackRails::Railtie32.subscribe!
-      else
-        raise "Truestack does not support this version of Rails"
+      if (TruestackRails::Configuration.environments.include?(Rails.env))
+        case (::Rails.version.to_f * 10.0).to_i / 10.0
+        when 3.2
+          TruestackRails::Host.report_once!
+          TruestackRails::Railtie32.instrument!
+          TruestackRails::Railtie32.subscribe!
+        else
+          raise "Truestack does not support this version of Rails"
+        end
       end
     end
   end
