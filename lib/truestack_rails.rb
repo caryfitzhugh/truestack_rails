@@ -26,12 +26,12 @@ module TruestackRails
         c.logger = config.logger
         c.app_version = "Rails#{Rails::VERSION::STRING}:TSRails-#{TruestackRails::VERSION}"
       end
-
+binding.pry
       case (::Rails.version.to_f * 10.0).to_i / 10.0
       when 3.2
+        TruestackRails::Host.report_once!
         TruestackRails::Railtie32.instrument!
         TruestackRails::Railtie32.subscribe!
-        TruestackRails::Host.report_once!
       else
         raise "Truestack does not support this version of Rails"
       end
