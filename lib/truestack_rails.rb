@@ -36,6 +36,8 @@ module TruestackRails
         else
           raise "Truestack does not support this version of Rails"
         end
+      else
+        config.logger.info "TruestackRails not enabled in this environment"
       end
     end
   end
