@@ -116,10 +116,9 @@ module TruestackRails
               yield
             rescue Exception, RuntimeError => e
               exception = e
-            ensure
-              TruestackRails::Host.report_once!
             end
           end
+
           if exception
             if @_ts_exception_data
               publish_data = @_ts_exception_data.merge({
