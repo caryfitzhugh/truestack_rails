@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
+  s.add_dependency 'truestack_client', :git => "git://github.com/caryfitzhugh/truestack_client.git"
   s.add_dependency 'momentarily', "~> 0.0.3"
   s.add_dependency 'grit'
   s.add_dependency 'sys-proctable', "~> 0.9.0"
