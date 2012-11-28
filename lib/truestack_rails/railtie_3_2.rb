@@ -110,8 +110,10 @@ module TruestackRails
           @truestack_request_id = request_name = TruestackRails.method_name(self, action_name)
           exception = nil
 
+          # Reset it *before* the yield, so that we can get all the methods.
+          TruestackRails::MethodTracking.reset_methods
+
           ActiveSupport::Notifications.instrument("truestack.request", :request_name => request_name) do
-            TruestackRails::MethodTracking.reset_methods
             begin
               yield
             rescue Exception, RuntimeError => e
