@@ -8,7 +8,8 @@ module TruestackRails
           :query => {
             :truestack => {
               :name       => "#{controller_name}##{action_name}"},
-            "Truestack-Access-Key" =>  TruestackClient.config.key
+            "Truestack-Access-Key" =>  TruestackClient.config.key,
+            "Truestack-Access-Environment" =>  TruestackClient.config.app_env
           }.to_query)
 
         return <<JS
