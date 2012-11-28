@@ -4,7 +4,7 @@ module TruestackRails
       if TruestackRails::Configuration.enable_browser_tracking?
         img_url = URI::HTTP.build(
           :host => TruestackClient.config.host,
-          :path => "/app/browser",
+          :path => "/app/collector/browser",
           :query => {
             :truestack => {
               :name       => "#{controller_name}##{action_name}"},
