@@ -25,6 +25,7 @@ module TruestackRails
       TruestackClient.configure do |c|
         c.logger = config.logger
         c.app_version = "Rails#{Rails::VERSION::STRING}:TSRails-#{TruestackRails::VERSION}"
+        c.app_environment = Rails.env
       end
 
       if (TruestackRails::Configuration.environments.include?(Rails.env))
