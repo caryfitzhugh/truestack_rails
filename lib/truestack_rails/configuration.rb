@@ -13,10 +13,6 @@ module TruestackRails
         @environments ||= [(self.config[:environments] || 'production')].flatten
       end
 
-      def enable_browser_tracking?
-        !!self.config[:browser_tracking]
-      end
-
       def logger
         if @logger
            @logger

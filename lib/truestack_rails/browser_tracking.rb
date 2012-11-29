@@ -1,7 +1,7 @@
 module TruestackRails
   module BrowserTracking
     def  truestack_browser_tracker
-      if TruestackRails::Configuration.enable_browser_tracking?
+      if (TruestackRails::Configuration.environments.include?(Rails.env))
         img_url = URI::HTTP.build(
           :host => TruestackClient.config.host,
           :path => "/api/collector/browser",
