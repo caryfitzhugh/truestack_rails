@@ -2,14 +2,16 @@ module TruestackRails
   module BrowserTracking
     def  truestack_browser_tracker
       if (TruestackRails::Configuration.environments.include?(Rails.env))
+        tc_config = TruestackClient.config
+
         img_url = URI::HTTP.build(
           :host => TruestackClient.config.host,
           :path => "/api/collector/browser",
           :query => {
             :truestack => {
               :name       => "#{controller_name}##{action_name}"},
-            "Truestack-Access-Key" =>  TruestackClient.config.key,
-            "Truestack-Access-Environment" =>  TruestackClient.config.app_environment
+            "Truestack-Access-Key" =>  tc_config.key,
+            "Truestack-Client-Type" => TruestackClient.create_type_string(tc_config.app_version, tc_config.app_environment)
           }.to_query)
 
         return <<JS
